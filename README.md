@@ -14,7 +14,7 @@ BlocksMC Tracker is a Node.js server application designed to monitor and track p
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v22 or higher) (Must be 22 becuase of mineflayer package having confilcts)
 - npm (Node Package Manager)
 - Termux (for Android users)
 - Basic command-line knowledge

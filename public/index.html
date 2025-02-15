@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BlocksMC Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden; /* Prevents horizontal scrollbar when fireball moves off-screen */
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1;
+    }
+    /* Redesigned heading with icon */
+    h1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #FF8C00, #FF0000, #FFFF00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    h1 img {
+      width: 128px;
+      height: auto;
+      margin-right: 10px;
+    }
+    label { 
+      display: block; 
+      margin-bottom: 5px; 
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) { 
+      background-color: #45a049; 
+    }
+    .ban-log {
+      margin-top: 20px;
+      padding: 10px;
+      background: #fff3cd;
+      border-radius: 4px;
+      border: 1px solid #ffeeba;
+    }
+    .ban-log h2 { 
+      margin-top: 0; 
+    }
+    .ban-log ul { 
+      list-style: none; 
+      padding-left: 0; 
+    }
+    .ban-log li { 
+      margin-bottom: 5px; 
+      font-size: 14px; 
+    }
+    /* Last check info box */
+    #lastCheckInfo {
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #e0f7fa;
+      border: 1px solid #4dd0e1;
+      border-radius: 4px;
+    }
+    /* Previous Usernames container */
+    #prevContainer {
+      margin-top: 20px;
+      background: #e8eaf6;
+      border: 1px solid #c5cae9;
+      border-radius: 4px;
+      padding: 10px;
+    }
+    #prevContainer h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5em;
+      text-align: center;
+    }
+    .prevEntry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+    }
+    .prevEntry:last-child {
+      border-bottom: none;
+    }
+    .prevUsername {
+      font-weight: bold;
+    }
+    .prevStatus {
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: white;
+      margin-right: 10px;
+    }
+    .statusNotBanned {
+      background: green;
+    }
+    .statusBanned {
+      background: red;
+    }
+    .statusChecking {
+      background: orange;
+    }
+    .statusLoggedIn {
+      background: yellow;
+      color: black;
+    }
+    .prevCount {
+      font-size: 0.9em;
+      color: #555;
+      margin-right: 10px;
+    }
+    .recheckBtn {
+      background-color: #4CAF50;
+      border: none;
+      padding: 5px 10px;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .recheckBtn:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    /* Fireball animation styles */
+    .fireball {
+      position: absolute;
+      width: 40px;  /* Adjust size as needed */
+      height: auto;
+      top: 10%; /* Starting vertical position */
+      left: -50px; /* Start off-screen left */
+      animation: fly 30s linear infinite;
+      z-index: 0;
+    }
+    @keyframes fly {
+      0% {
+        left: -50px;
+        top: 10%;
+      }
+      25% {
+        left: 30%;
+        top: 20%;
+      }
+      50% {
+        left: 60%;
+        top: 10%;
+      }
+      75% {
+        left: 90%;
+        top: 20%;
+      }
+      100% {
+        left: 110%;
+        top: 10%;
+      }
+    }
+    /* Ban overlay styles */
+    #banOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: red;
+      color: white;
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      text-align: center;
+      padding: 20px;
+    }
+    /* Warning message styles */
+    #warningMessage {
+      display: none;
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    /* Reset Cookies Button - Danger Zone */
+    .reset-cookies-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 1100;
+    }
+    .reset-cookies-btn:hover {
+      background-color: #c9302c;
+    }
+  </style>
+</head>
+<body>
+  <!-- Ban overlay that appears if user is banned -->
+  <div id="banOverlay">
+    You are banned from this site.<br>
+    Reason: stop being stupid trying to ban me and you thought you could do this? Well no!
+  </div>
+
+  <!-- Warning message for connection issues -->
+  <div id="warningMessage"></div>
+  
+  <!-- Fireball image that flies across the screen -->
+  <img src="/fireball.png" alt="Fireball" class="fireball">
+  
+  <!-- Reset Cookies Button (Danger Zone) -->
+  <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
+
+  <div class="container">
+    <h1>
+      <img src="TrackerIcon.png" alt="Icon">
+      BlocksMC Tracker Tool
+    </h1>
+    
+    <!-- Last check info loaded from cookies -->
+    <div id="lastCheckInfo" style="display:none;"></div>
+    
+    <label for="username">Enter a username to check ban status:</label>
+    <input type="text" id="username" placeholder="Enter username" maxlength="16">
+    <button id="checkBtn">Check</button>
+
+    <div class="ban-log" id="banLog">
+      <h2>Ban Log</h2>
+      <ul id="logList"></ul>
+    </div>
+    
+    <!-- Previous Usernames Section -->
+    <div id="prevContainer" style="display:none;">
+      <h2>Previous Usernames</h2>
+      <div id="prevList"></div>
+    </div>
+  </div>
+  
+  <!-- Socket.IO client library -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Utility functions for cookie handling
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    // Check if the user is banned from the site (client-side ban)
+    function checkSiteBan() {
+      if (getCookie("siteBanned")) {
+        document.getElementById("banOverlay").style.display = "flex";
+        document.querySelector(".container").style.pointerEvents = "none";
+      }
+    }
+    checkSiteBan(); // Run on page load
+
+    // Map Minecraft color names to CSS hex colors
+    const colorMap = {
+      black: '#000000',
+      dark_blue: '#0000AA',
+      dark_green: '#00AA00',
+      dark_aqua: '#00AAAA',
+      dark_red: '#AA0000',
+      dark_purple: '#AA00AA',
+      gold: '#FFAA00',
+      gray: '#AAAAAA',
+      grey: '#AAAAAA',
+      dark_gray: '#555555',
+      dark_grey: '#555555',
+      blue: '#5555FF',
+      green: '#55FF55',
+      aqua: '#55FFFF',
+      red: '#FF5555',
+      light_purple: '#FF55FF',
+      yellow: '#FFFF55',
+      white: '#FFFFFF'
+    };
+
+    /**
+     * Parses a Minecraft JSON message and returns HTML.
+     * If the string is not valid JSON, returns the string as is.
+     */
+    function parseMinecraftMessage(jsonString) {
+      try {
+        const data = JSON.parse(jsonString);
+        if (!data.extra || !Array.isArray(data.extra)) return jsonString;
+        let html = '';
+        data.extra.forEach(part => {
+          let text = part.text || '';
+          text = text.replace(/\n/g, '<br>');
+          const cssColor = colorMap[part.color] || part.color || '#FFFFFF';
+          const boldStyle = part.bold ? 'font-weight:bold;' : '';
+          html += `<span style="color:${cssColor}; ${boldStyle}">${text}</span>`;
+        });
+        return html;
+      } catch (e) {
+        return jsonString;
+      }
+    }
+    function renderMessage(message) {
+      const prefix = "Kicked: ";
+      if (message.startsWith(prefix)) {
+        const jsonPart = message.substring(prefix.length);
+        return prefix + parseMinecraftMessage(jsonPart);
+      }
+      return parseMinecraftMessage(message);
+    }
+
+    const socket = io();
+    const checkBtn = document.getElementById('checkBtn');
+    const usernameInput = document.getElementById('username');
+    const logList = document.getElementById('logList');
+    const lastCheckInfo = document.getElementById('lastCheckInfo');
+    const prevList = document.getElementById('prevList');
+    const prevContainer = document.getElementById('prevContainer');
+    let currentUsername = ""; // holds the username being checked
+
+    // Prevent spacebar input in the username field
+    usernameInput.addEventListener('keydown', (e) => {
+      if (e.key === ' ') e.preventDefault();
+    });
+
+    // --- Previous Users Data Handling ---
+    // Cookie "prevUsers" stores an object mapping username -> { count, status }
+    function getPrevUsers() {
+      const data = getCookie("prevUsers");
+      return data ? JSON.parse(data) : {};
+    }
+    function setPrevUsers(obj) {
+      setCookie("prevUsers", JSON.stringify(obj), 7);
+    }
+    function updatePrevList() {
+      const prevUsers = getPrevUsers();
+      // If there is at least one previous user, show container; otherwise hide.
+      if (Object.keys(prevUsers).length > 0) {
+        prevContainer.style.display = "block";
+      } else {
+        prevContainer.style.display = "none";
+      }
+      // Clear current list
+      prevList.innerHTML = "";
+      for (let user in prevUsers) {
+        const entry = prevUsers[user];
+        const div = document.createElement("div");
+        div.className = "prevEntry";
+        // Username
+        const unameSpan = document.createElement("span");
+        unameSpan.className = "prevUsername";
+        unameSpan.textContent = user;
+        // Status
+        const statusSpan = document.createElement("span");
+        // Apply CSS class based on status text
+        if (entry.status.startsWith("Not banned") || entry.status === "Unbanned") {
+          statusSpan.className = "prevStatus statusNotBanned";
+        } else if (entry.status.startsWith("Banned")) {
+          statusSpan.className = "prevStatus statusBanned";
+        } else if (entry.status.startsWith("Premium Account")) {
+          statusSpan.className = "prevStatus statusChecking";
+        } else if (entry.status === "Unbanned but player is playing right now") {
+          statusSpan.className = "prevStatus statusLoggedIn";
+        } else {
+          statusSpan.className = "prevStatus statusChecking";
+        }
+        statusSpan.textContent = entry.status;
+        // Recheck count
+        const countSpan = document.createElement("span");
+        countSpan.className = "prevCount";
+        countSpan.textContent = "Recheck count: " + entry.count;
+        // ReCheck Button
+        const recheckButton = document.createElement("button");
+        recheckButton.className = "recheckBtn";
+        recheckButton.textContent = "ReCheck";
+        // Disable button if the account is marked as Banned or Premium Account.
+        if (entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account")) {
+          recheckButton.disabled = true;
+        } else {
+          recheckButton.disabled = false;
+        }
+        recheckButton.addEventListener("click", () => {
+          usernameInput.value = user;
+          checkBtn.click();
+        });
+        // Append all to the div
+        div.appendChild(unameSpan);
+        div.appendChild(statusSpan);
+        div.appendChild(countSpan);
+        div.appendChild(recheckButton);
+        prevList.appendChild(div);
+      }
+    }
+
+    // --- Last Check Info ---
+    function updateLastCheckInfo() {
+      const lastUsername = getCookie("lastUsername");
+      const lastBanStatus = getCookie("lastBanStatus");
+      let displayStatus = lastBanStatus;
+      if (lastBanStatus && lastBanStatus.includes("<span")) {
+        displayStatus = "The player is currently not banned";
+      }
+      if (lastUsername) {
+        lastCheckInfo.style.display = "block";
+        lastCheckInfo.innerHTML = `
+          <strong>Last Checked:</strong> ${lastUsername} <br>
+          <strong>Status:</strong> ${displayStatus ? displayStatus : "Unknown"} 
+          <br><button id="recheckBtnLast">Re-check this username</button>
+        `;
+        document.getElementById("recheckBtnLast").addEventListener("click", () => {
+          usernameInput.value = lastUsername;
+          checkBtn.click();
+        });
+      }
+    }
+    updateLastCheckInfo();
+    updatePrevList();
+
+    // --- Ban Function ---
+    function banUser() {
+      alert(":)");
+      setCookie("siteBanned", "true", 2 / 1440);
+      document.getElementById("banOverlay").style.display = "flex";
+      document.querySelector(".container").style.pointerEvents = "none";
+      setTimeout(() => {
+        setCookie("siteBanned", "", -1);
+        document.getElementById("banOverlay").style.display = "none";
+        document.querySelector(".container").style.pointerEvents = "auto";
+      }, 2 * 60 * 1000);
+    }
+
+    // --- Check Button Event ---
+    checkBtn.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      if (getCookie("siteBanned")) return;
+      // Special check: if username is exactly "ForgedSengoku", block the request.
+      if (username === "ForgedSengoku") {
+        banUser();
+        return;
+      }
+      // Validate username
+      const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+      if (!validUsernameRegex.test(username)) {
+        alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
+        return;
+      }
+      currentUsername = username;
+      setCookie("lastUsername", username, 7);
+      
+      // Update previous users cookie data:
+      const prevUsers = getPrevUsers();
+      if (prevUsers[username]) {
+        prevUsers[username].count++;
+        // Set status to "Checking..." every time a new check is initiated.
+        prevUsers[username].status = "Checking...";
+      } else {
+        prevUsers[username] = { count: 1, status: "Checking..." };
+      }
+      setPrevUsers(prevUsers);
+      updatePrevList();
+      
+      // Disable button and start countdown
+      checkBtn.disabled = true;
+      checkBtn.textContent = "Please wait 7 seconds...";
+      setTimeout(() => { checkBtn.textContent = "Please wait 6 seconds..."; }, 1000);
+      setTimeout(() => { checkBtn.textContent = "Please wait 4 seconds..."; }, 3000);
+      setTimeout(() => { checkBtn.textContent = "Please wait 2 seconds..."; }, 5000);
+      setTimeout(() => { 
+        checkBtn.disabled = false;
+        checkBtn.textContent = "Check";
+      }, 7000);
+
+      // Clear log and emit check event
+      logList.innerHTML = "";
+      socket.emit('checkBan', username);
+    });
+
+    // --- Socket Event Listeners ---
+    socket.on('banResult', (message) => {
+      // If message contains ECONNRESET error, show warning and do not log the error.
+      if (message.includes("Error: read ECONNRESET")) {
+        document.getElementById("warningMessage").style.display = "block";
+        document.getElementById("warningMessage").textContent = "WARNING: Maybe my internet is lagging? OR server is down?";
+        return;
+      } else {
+        document.getElementById("warningMessage").style.display = "none";
+      }
+      
+      const li = document.createElement('li');
+      li.innerHTML = renderMessage(message);
+      logList.appendChild(li);
+      setCookie("lastBanStatus", message, 7);
+      updateLastCheckInfo();
+      // Update the previous users status for currentUsername
+      const prevUsers = getPrevUsers();
+      let status = "";
+      // If message contains Premium ON (exact JSON snippet)
+      if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
+        status = "Premium Account - Unable To Check. NOTE: You won't be able to check premium accounts due to blocksmc restrictions.";
+      } else if (message.toLowerCase().includes("you are already logged on to this server")) {
+        status = "Unbanned but player is playing right now";
+      } else {
+        status = message.toLowerCase().includes("not banned") ? "Not banned" : "Banned";
+      }
+      if (prevUsers[currentUsername]) {
+        prevUsers[currentUsername].status = status;
+      }
+      setPrevUsers(prevUsers);
+      updatePrevList();
+    });
+    socket.on('kickLog', (message) => {
+      const li = document.createElement('li');
+      li.innerHTML = renderMessage(message);
+      logList.appendChild(li);
+    });
+
+    // --- Reset Cookies Button Event ---
+    document.getElementById('resetCookiesBtn').addEventListener('click', function() {
+      if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
+        setCookie("prevUsers", "", -1);
+        updatePrevList();
+        alert("All list of previously usernames were reset.");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -559,47 +559,62 @@
       setCookie("prevUsers", JSON.stringify(obj), 7);
     }
     function updatePrevList() {
-      const prevUsers = getPrevUsers();
-      prevContainer.style.display = Object.keys(prevUsers).length > 0 ? "block" : "none";
-      prevList.innerHTML = "";
-      for (let user in prevUsers) {
-        const entry = prevUsers[user];
-        const div = document.createElement("div");
-        div.className = "prevEntry";
-        const unameSpan = document.createElement("span");
-        unameSpan.className = "prevUsername";
-        unameSpan.textContent = user;
-        const statusSpan = document.createElement("span");
-        if (entry.status.startsWith("Not banned") || entry.status === "Unbanned") {
-          statusSpan.className = "prevStatus statusNotBanned";
-        } else if (entry.status.startsWith("Banned")) {
-          statusSpan.className = "prevStatus statusBanned";
-        } else if (entry.status.startsWith("Premium Account")) {
-          statusSpan.className = "prevStatus statusChecking";
-        } else if (entry.status === "Unbanned but player is playing right now") {
-          statusSpan.className = "prevStatus statusLoggedIn";
-        } else {
-          statusSpan.className = "prevStatus statusChecking";
-        }
-        statusSpan.textContent = entry.status;
-        const countSpan = document.createElement("span");
-        countSpan.className = "prevCount";
-        countSpan.textContent = "Recheck count: " + entry.count;
-        const recheckButton = document.createElement("button");
-        recheckButton.className = "recheckBtn";
-        recheckButton.textContent = "ReCheck";
-        recheckButton.disabled = entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account");
-        recheckButton.addEventListener("click", () => {
-          usernameInput.value = user;
-          checkBtn.click();
-        });
-        div.appendChild(unameSpan);
-        div.appendChild(statusSpan);
-        div.appendChild(countSpan);
-        div.appendChild(recheckButton);
-        prevList.appendChild(div);
-      }
+  const prevUsers = getPrevUsers();
+  prevContainer.style.display = Object.keys(prevUsers).length > 0 ? "block" : "none";
+  prevList.innerHTML = "";
+  for (let user in prevUsers) {
+    const entry = prevUsers[user];
+    const div = document.createElement("div");
+    div.className = "prevEntry";
+    
+    // Create and add the player's head image (32px)
+    const headImg = document.createElement("img");
+    headImg.src = "https://minotar.net/helm/" + user;
+    headImg.alt = user + "'s head";
+    headImg.style.width = "32px";
+    headImg.style.height = "32px";
+    headImg.style.marginRight = "10px";
+    div.appendChild(headImg);
+    
+    const unameSpan = document.createElement("span");
+    unameSpan.className = "prevUsername";
+    unameSpan.textContent = user;
+    
+    const statusSpan = document.createElement("span");
+    if (entry.status.startsWith("Not banned") || entry.status === "Unbanned") {
+      statusSpan.className = "prevStatus statusNotBanned";
+    } else if (entry.status.startsWith("Banned")) {
+      statusSpan.className = "prevStatus statusBanned";
+    } else if (entry.status.startsWith("Premium Account")) {
+      statusSpan.className = "prevStatus statusChecking";
+    } else if (entry.status === "Unbanned but player is playing right now") {
+      statusSpan.className = "prevStatus statusLoggedIn";
+    } else {
+      statusSpan.className = "prevStatus statusChecking";
     }
+    statusSpan.textContent = entry.status;
+    
+    const countSpan = document.createElement("span");
+    countSpan.className = "prevCount";
+    countSpan.textContent = "Recheck count: " + entry.count;
+    
+    const recheckButton = document.createElement("button");
+    recheckButton.className = "recheckBtn";
+    recheckButton.textContent = "ReCheck";
+    recheckButton.disabled = entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account");
+    recheckButton.addEventListener("click", () => {
+      usernameInput.value = user;
+      checkBtn.click();
+    });
+    
+    div.appendChild(unameSpan);
+    div.appendChild(statusSpan);
+    div.appendChild(countSpan);
+    div.appendChild(recheckButton);
+    prevList.appendChild(div);
+  }
+}
+
     
     function updateLastCheckInfo() {
       const lastUsername = getCookie("lastUsername");

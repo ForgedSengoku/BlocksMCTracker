@@ -7,47 +7,67 @@ const io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
+// Serve the main Tracker page (index.html)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+// Serve the advanced OG Username Tracker page (indexog.html)
+app.get('/indexog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'indexog.html'));
 });
 
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  // --- Ban-check events (for index.html) ---
   socket.on('checkBan', (username) => {
-    const { createBotInstance } = require('./bot');
+    const { createBotInstance } = require('./bot');  // Your existing ban-checking bot
     createBotInstance(username, (data) => {
       if (data.type === 'result') {
-        // Send the final result to the client
         socket.emit('banResult', data.message);
-        
-        // Determine banned status:
-        // If the message contains "not banned" (case insensitive) then consider it not banned.
+        // Append to store_data.txt (for logging purposes only)
         const isNotBanned = data.message.toLowerCase().includes('not banned');
-        
-        // Create a timestamp in YYYY-MM-DD HH:mm:ss (24-hour) format.
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        
-        // Format the log line as: [timestamp] *username* Not banned  OR  [timestamp] *username* Banned
+        const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
         const logLine = `[${timestamp}] *${username}* ${isNotBanned ? 'Not banned' : 'Banned'}\n`;
-
-        // Append the log line to public/store_data.txt
         fs.appendFile(path.join(__dirname, 'public', 'store_data.txt'), logLine, (err) => {
-          if (err) {
-            console.error('Error appending to store_data.txt:', err);
-          }
+          if (err) console.error('Error appending to store_data.txt:', err);
         });
       } else if (data.type === 'log') {
         socket.emit('kickLog', data.message);
       }
     });
+  });
+
+  // --- OG Name Claimer events (for indexog.html) ---
+  socket.on('startNamesniper', (data) => {
+    const { premiumUuid, targetUuid } = data;
+    const { startSniper } = require('./namesniper');
+    startSniper(premiumUuid, targetUuid, (response) => {
+      if(response.type === 'claimed'){
+        socket.emit('namesniperClaimed', response.message);
+      } else if(response.type === 'alert'){
+        socket.emit('namesniperAlert', response.message);
+      } else if(response.type === 'info'){
+        socket.emit('namesniperInfo', response.message);
+      } else if(response.type === 'error'){
+        socket.emit('namesniperError', response.message);
+      }
+    });
+  });
+  
+  socket.on('stopNamesniper', () => {
+    const { stopSniper } = require('./namesniper');
+    stopSniper((response) => {
+      socket.emit('namesniperStopped', response.message);
+    });
+  });
+
+  // ---- Event to get stored OG usernames for indexog.html ----
+  socket.on('getOGUsernames', () => {
+    const { readUserOGStore } = require('./namesniper');
+    const ogStore = readUserOGStore();
+    socket.emit('ogUsernames', ogStore);
   });
 
   socket.on('disconnect', () => {

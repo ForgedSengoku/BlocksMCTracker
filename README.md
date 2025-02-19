@@ -38,7 +38,7 @@ cd BlocksMCTracker
 
 ### Step 2: Install Dependencies  
 ```bash
-npm install
+npm install mineflayer express socket.io mojang-api
 ```  
 
 ### Step 3: Start the Server  

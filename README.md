@@ -167,4 +167,4 @@ This project is **not affiliated** with BlocksMC. Use it responsibly and in comp
 
 **⭐ Star this repo if you find it useful!**  
 Report issues [here](https://github.com/ForgedSengoku/BlocksMCTracker/issues).
-```
+

@@ -72,7 +72,7 @@ The server will start at `http://localhost:5052` by default.
 
 4. **Install Dependencies:**  
    ```bash
-   npm install
+   npm install mineflayer express socket.io mojang-api
    ```  
 
 5. **Start the Server:**  

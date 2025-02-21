@@ -1,7 +1,9 @@
 
+---
+
 # BlocksMC Tracker  
 
-BlocksMC Tracker is a **Node.js** server application designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally, even on mobile devices using **Termux**.
+BlocksMC Tracker is a **Node.js** server application designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally, even on mobile devices using **Termux**. A **desktop version** is now available for easier setup and use.
 
 ---
 
@@ -15,7 +17,8 @@ BlocksMC Tracker is a **Node.js** server application designed to monitor and tra
 - **Lightweight** – Doesn’t require many resources since it’s only a ban checker tool.  
 - **Local Hosting** – Defaults to `localhost:5052` for quick setup and testing.  
 - **Automatic Updates** – Continuously refreshes player status without manual intervention.  
-- **Cookie Storage** – Stores cookies locally for session persistence (no external databases required).
+- **Cookie Storage** – Stores cookies locally for session persistence (no external databases required).  
+- **Desktop Version Available** – An easy-to-install version for Windows, macOS, and Linux users.
 
 ---
 
@@ -30,26 +33,11 @@ BlocksMC Tracker is a **Node.js** server application designed to monitor and tra
 
 ## Installation & Usage  
 
-### Step 1: Clone the Repository  
-```bash
-git clone https://github.com/ForgedSengoku/BlocksMCTracker.git
-cd BlocksMCTracker
-```  
+### Desktop Version (Easier Setup)  
 
-### Step 2: Install Dependencies  
-```bash
-npm install mineflayer express socket.io mojang-api
-```  
+The **desktop version** of the tracker is now available, simplifying the installation process! Download the latest release from [GitHub Releases](https://github.com/ForgedSengoku/BlocksMCTracker/releases). Simply download and run the executable for your operating system.
 
-### Step 3: Start the Server  
-```bash
-node server.js
-```  
-The server will start at `http://localhost:5052` by default.
-
----
-
-## Getting Started on Mobile (Termux)  
+### Mobile (Termux) Setup  
 
 1. **Install Node.js:**  
    Open Termux and type:  
@@ -83,9 +71,7 @@ The server will start at `http://localhost:5052` by default.
 6. **Access the Tracker:**  
    Open your phone’s browser and go to `http://localhost:5052`.
 
----
-
-## Getting Started on PC  
+### PC Setup  
 
 1. **Download Node.js:**  
    Visit [https://nodejs.org/](https://nodejs.org/) and download the **LTS (Long Term Support)** version. This version is stable and works on ARM64 laptops as well as standard PCs.
@@ -167,4 +153,3 @@ This project is **not affiliated** with BlocksMC. Use it responsibly and in comp
 
 **⭐ Star this repo if you find it useful!**  
 Report issues [here](https://github.com/ForgedSengoku/BlocksMCTracker/issues).
-

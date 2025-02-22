@@ -2,24 +2,26 @@
 ---
 # BlocksMC Tracker
 
-BlocksMC Tracker is a *Electron App* application designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally, even on mobile devices using **Termux**. A **desktop version** is now available for easier setup and use.
+BlocksMC Tracker is an **Electron App** designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally. Note that the website version has been discontinued for a simpler setup. The project now provides an Electron desktop app for Windows and an APK for Android devices.
 
-> Note: The website version has been discontinued for a simpler setup and now has moved to electron.
+> **Important:**
+> - **Mobile Users:** Electron is not supported in Termux. For Android devices, download the APK file from [GitHub Releases](https://github.com/ForgedSengoku/BlocksMCTracker/releases) for a simpler, streamlined setup.
+> - **Desktop Users:** This version is available **only for Windows**. Linux and macOS versions are not provided.
 
 ---
 
 ## Features
 
 - **Real-Time Ban Monitoring** – Instantly check if a player is banned or unbanned on BlocksMC.
-- **Mobile-Friendly** – Runs on Termux, allowing you to host the tracker directly from your Android device.
+- **Mobile-Friendly** – For Android users, an APK file is available for easy installation.
 - **Stylish Interface** – Clean and modern design for a seamless user experience.
 - **Pink Theme** – A sleek pink-colored UI for a fresh look.
-- **Erase All Player Usernames** – Useful for clearing space and freeing up storage when tracking thousands of usernames.
+- **Erase All Player Usernames** – Useful for clearing space when tracking thousands of usernames.
 - **Lightweight** – Doesn’t require many resources since it’s only a ban checker tool.
 - **Local Hosting** – Defaults to `localhost:5052` for quick setup and testing.
 - **Automatic Updates** – Continuously refreshes player status without manual intervention.
 - **Cookie Storage** – Stores cookies locally for session persistence (no external databases required).
-- **Desktop Version Available** – An easy-to-install version for Windows, macOS, and Linux users.
+- **Desktop Version Available (Windows Only)** – An easy-to-install version for Windows users.
 
 ---
 
@@ -27,108 +29,133 @@ BlocksMC Tracker is a *Electron App* application designed to monitor and track *
 
 - **Node.js** (v22 or higher) – Required due to Mineflayer package conflicts.
 - **npm** (Node Package Manager)
-- **Termux** (for Android users)
+- **Termux** (for Android users, though Electron is not supported there)
 - **Basic command-line knowledge**
 
 ---
 
 ## Installation & Usage
 
-### Desktop Version (Easier Setup)
+### Desktop Version (Windows)
 
-The **desktop version** of the tracker is available for straightforward installation. Download the latest release from [GitHub Releases](https://github.com/ForgedSengoku/BlocksMCTracker/releases) and run the executable for your operating system.
-
-### Mobile (Termux) Setup
-
-1. **Install Node.js:**  
-   Open Termux and type:
-   ```bash
-   pkg install node-lts
-   ```
-
-2. **Choose a Folder:**  
-   Navigate to your desired folder, for example:
-   ```bash
-   cd /storage/emulated/0/YourFolder
-   ```
-
-3. **Clone the Repository:**  
+1. **Clone the Repository:**
    ```bash
    git clone https://github.com/ForgedSengoku/BlocksMCTracker.git
    cd BlocksMCTracker
    ```
 
-4. **Install Dependencies:**  
+2. **Install Dependencies:**
    ```bash
-   npm install mineflayer express socket.io mojang-api
+   npm install electron mojang-api express socket.io mineflayer
    ```
 
-5. **Start the Server:**  
+3. **Testing the App:**
+   Press:
    ```bash
-   node server.js
+   npm start
+   ```
+   This command launches the Electron app for testing.
+
+4. **Building the App:**
+   To compile the app into an executable (.exe) file for Windows, run:
+   ```bash
+   npm run app:dist
    ```
 
-6. **Access the Tracker:**  
-   Open your browser and navigate to `http://localhost:5052`.
+### Mobile (Android APK) Setup
 
-### PC Setup
+Since Electron cannot be installed in Termux, use the provided APK for Android:
 
-1. **Download Node.js:**  
-   Visit [https://nodejs.org/](https://nodejs.org/) and download the **LTS (Long Term Support)** version.
-
-2. **Clone the Repository:**  
-   Open a terminal (or Command Prompt) and run:
-   ```bash
-   git clone https://github.com/ForgedSengoku/BlocksMCTracker.git
-   cd BlocksMCTracker
-   ```
-
-3. **Install Dependencies:**  
-   ```bash
-   npm install
-   ```
-
-4. **Start the Server:**  
-   ```bash
-   node server.js
-   ```
-
-5. **Access the Tracker:**  
-   Open your browser and navigate to `http://localhost:5052`.
+1. **Download the APK:**  
+   Visit [GitHub Releases](https://github.com/ForgedSengoku/BlocksMCTracker/releases) and download the latest APK file.
+2. **Install the APK:**  
+   Open the APK file on your Android device and follow the installation prompts.
 
 **Why It Works on a Phone:**  
-Android devices share similarities with ARM64 laptops, and Node.js supports ARM. This allows you to run Node.js applications like this ban checker directly on your phone.
+Android devices share similarities with ARM64 laptops, and while Node.js supports ARM, Electron cannot be used in Termux. The APK offers a streamlined mobile experience.
 
 ---
 
 ## Compiling, Forking, and Modifying
 
-If you wish to fork, modify, or compile the project further, follow these steps:
+If you wish to fork, modify, or decompile the project further, follow these steps:
 
 1. **Fork the Repository:**  
    Click the "Fork" button on GitHub to create your own copy of the project.
 
-2. **Clone Your Fork:**  
+2. **Clone Your Fork:**
    ```bash
    git clone https://github.com/yourusername/BlocksMCTracker.git
    cd BlocksMCTracker
    ```
 
-3. **Install Development Dependencies:**  
-   For projects using Node.js in a similar fashion to Electron, add Electron as a development dependency:
+3. **Install Dependencies:**  
+   Install the required packages using:
    ```bash
-   npm install electron --save-dev
+   npm install electron mojang-api express socket.io mineflayer
    ```
 
 4. **Make Your Modifications:**  
-   Update the code, add features, or change configurations as desired. Changes will take effect after restarting the server.
+   Update the code, add features, or change configurations as needed. Your changes will take effect after restarting the app.
 
-5. **Compile or Run Your Version:**  
-   Run the server using:
+5. **Run Your Version:**  
+   For testing, simply run:
    ```bash
-   node server.js
+   npm start
    ```
-   For Electron-based builds, ensure your main file points to the correct Electron entry point.
+
+6. **Build the App:**  
+   To compile your modified version into an executable, run:
+   ```bash
+   npm run app:dist
+   ```
+
+Below is an example of the `package.json` file used for building the app with Electron:
+
+```json
+{
+  "name": "blocksmctracker",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "serve": "node server.js",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "minecraft-api": "^0.0.3",
+    "mineflayer": "^4.26.0",
+    "mojang-api": "^0.0.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.blocksmctracker.app",
+    "files": [
+      "server.js",
+      "bot.js",
+      "namesniper.js",
+      "package.json",
+      "public/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.ico"
+    }
+  },
+  "description": ""
+}
+```
 
 ---
 
@@ -169,7 +196,7 @@ Test the tracker without installing anything by visiting:
   Verify that **Node.js** and **npm** are installed correctly by running `node -v` and `npm -v`.
 
 - **Termux Issues:**  
-  Grant storage permissions and update packages with:
+  For Android users attempting to use Termux, note that Electron is not supported. Use the provided APK instead. Also, update packages with:
   ```bash
   pkg update
   ```

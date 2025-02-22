@@ -2,7 +2,7 @@
 ---
 # BlocksMC Tracker
 
-BlocksMC Tracker is a **Node.js** server application designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally, even on mobile devices using **Termux**. A **desktop version** is now available for easier setup and use.
+BlocksMC Tracker is a *Electron App* application designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally, even on mobile devices using **Termux**. A **desktop version** is now available for easier setup and use.
 
 > Note: The website version has been discontinued for a simpler setup and now has moved to electron.
 

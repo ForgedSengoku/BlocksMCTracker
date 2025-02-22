@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OG Username Tracker</title>
+  <title>OG Username Tracker 1.1</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* ---------- Base Styles (Same as index.html) ---------- */
@@ -109,14 +109,26 @@
       border: 1px solid #ec407a;
       color: #ff80ab;
     }
-    #claimedAccountsList .claimedEntry {
+    /* ---------- OG Account Entry Animation ---------- */
+    @keyframes dropRotate {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0) rotate(360deg);
+        opacity: 1;
+      }
+    }
+    .claimedEntry {
+      animation: dropRotate 1s ease-out;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 5px;
       border-bottom: 1px solid #ddd;
     }
-    #claimedAccountsList .claimedEntry:last-child {
+    .claimedEntry:last-child {
       border-bottom: none;
     }
     .copyBtn, .stopBotBtn {
@@ -159,6 +171,9 @@
   </style>
 </head>
 <body>
+  <!-- Audio element now uses accountclaimed.mp3 -->
+  <audio id="claimSound" src="accountclaimed.mp3" preload="auto"></audio>
+  
   <div id="themeToggle">Theme: Legacy</div>
   <div class="container">
     <h1>
@@ -179,6 +194,7 @@
   </div>
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    // Cookie utility functions
     function setCookie(name, value, days) {
       var expires = "";
       if(days) {
@@ -191,13 +207,30 @@
     function getCookie(name) {
       var nameEQ = name + "=";
       var ca = document.cookie.split(';');
-      for(var i=0;i < ca.length;i++) {
+      for(var i=0; i < ca.length; i++) {
         var c = ca[i];
-        while(c.charAt(0)==' ') c = c.substring(1,c.length);
-        if(c.indexOf(nameEQ)==0) return c.substring(nameEQ.length,c.length);
+        while(c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if(c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
       }
       return null;
     }
+    // Save OG list to cookie
+    function saveOGListToCookie(ogStore) {
+      setCookie("ogUserList", JSON.stringify(ogStore), 7);
+    }
+    // Load OG list from cookie (if available)
+    function loadOGListFromCookie() {
+      const data = getCookie("ogUserList");
+      if(data) {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          console.error("Error parsing ogUserList cookie:", e);
+        }
+      }
+      return {};
+    }
+    
     function updateTheme() {
       var pink = getCookie("pinkdesign");
       if(pink === "true"){
@@ -230,31 +263,60 @@
     const namesniperStatus = document.getElementById("namesniperStatus");
     const claimedAccountsList = document.getElementById("claimedAccountsList");
     const redirectBackBtn = document.getElementById("redirectBackBtn");
-    let premiumUuid = getCookie("premiumUuid");
-    if(!premiumUuid) {
-      premiumUuid = (function(){
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let key = '';
-        for(let i=0; i<16; i++){
-          key += chars.charAt(Math.floor(Math.random()*chars.length));
-        }
-        return key;
-      })();
-      setCookie("premiumUuid", premiumUuid, 7);
+    
+    // premiumUuid is no longer used – always use "localhost".
+    setCookie("premiumUuid", "localhost", 7);
+    
+    // Function to render the OG list from an object
+    function renderOGList(ogStore) {
+      claimedAccountsList.innerHTML = "";
+      for (const key in ogStore) {
+        const entry = ogStore[key];
+        let statusColor = "black";
+        if(entry.status === "Claimed account") statusColor = "green";
+        else if(entry.status === "Currently checking") statusColor = "#B8860B";
+        else if(entry.status === "Stopped") statusColor = "red";
+        const entryDiv = document.createElement("div");
+        entryDiv.className = "claimedEntry";
+        entryDiv.innerHTML = `<img src="https://minotar.net/helm/${entry.Username}" alt="${entry.Username} avatar" style="width:32px;"> 
+                              <strong>${entry.Username}</strong> - <em>Password: ${entry.Password}</em> 
+                              - <span style="color:${statusColor}; font-weight:bold;">${entry.status}</span>`;
+        // Add a Stop Bot button for each entry.
+        const stopBotBtn = document.createElement("button");
+        stopBotBtn.className = "stopBotBtn";
+        stopBotBtn.textContent = "Stop Bot";
+        stopBotBtn.addEventListener("click", () => {
+          socket.emit("stopNamesniper");
+        });
+        entryDiv.appendChild(stopBotBtn);
+        claimedAccountsList.appendChild(entryDiv);
+      }
     }
+    
+    // On page load, if there is a cookie, render the OG list
+    const storedOG = loadOGListFromCookie();
+    if(Object.keys(storedOG).length > 0) {
+      renderOGList(storedOG);
+    }
+    
     startNamesniperBtn.addEventListener("click", () => {
       const targetUuid = document.getElementById("targetUuid").value.trim();
       if(!targetUuid){
         alert("Please enter a target player UUID.");
         return;
       }
-      socket.emit("startNamesniper", { premiumUuid: premiumUuid, targetUuid: targetUuid });
+      // Disable Start button while tracking is active.
+      startNamesniperBtn.disabled = true;
+      socket.emit("startNamesniper", { targetUuid: targetUuid });
+      socket.emit("getOGUsernames");
     });
+    
     stopNamesniperBtn.addEventListener("click", () => {
       if(confirm("Are you sure you want to stop the bot?")){
         socket.emit("stopNamesniper");
       }
     });
+    
     socket.on("namesniperInfo", (message) => {
       namesniperStatus.innerHTML = `<span style="color: blue;">${message}</span>`;
     });
@@ -263,37 +325,27 @@
     });
     socket.on("namesniperClaimed", (message) => {
       namesniperStatus.innerHTML = `<span style="color: green;">${message}</span>`;
-      const match = message.match(/Claimed username (.+?) using command "(.*?)"/);
-      if(match){
-        const claimedUsername = match[1];
-        const commandUsed = match[2];
-        const entryDiv = document.createElement("div");
-        entryDiv.className = "claimedEntry";
-        entryDiv.innerHTML = `<strong>${claimedUsername}</strong> - <em>${commandUsed}</em>`;
-        const copyBtn = document.createElement("button");
-        copyBtn.className = "copyBtn";
-        copyBtn.textContent = "Copy";
-        copyBtn.addEventListener("click", () => {
-          navigator.clipboard.writeText(`${claimedUsername} ${commandUsed}`);
-          alert("Copied to clipboard!");
-        });
-        const stopBotBtn = document.createElement("button");
-        stopBotBtn.className = "stopBotBtn";
-        stopBotBtn.textContent = "Stop Bot";
-        stopBotBtn.addEventListener("click", () => {
-          socket.emit("stopNamesniper");
-        });
-        entryDiv.appendChild(copyBtn);
-        entryDiv.appendChild(stopBotBtn);
-        claimedAccountsList.appendChild(entryDiv);
-      }
+      startNamesniperBtn.disabled = true;
+      // Play notification sound upon claim.
+      document.getElementById("claimSound").play();
+      socket.emit("getOGUsernames");
     });
     socket.on("namesniperError", (message) => {
       namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;
+      startNamesniperBtn.disabled = false;
     });
     socket.on("namesniperStopped", (message) => {
-      namesniperStatus.innerHTML = `<span style="color: gray;">${message}</span>`;
+      namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;
+      startNamesniperBtn.disabled = false;
+      socket.emit("getOGUsernames");
     });
+    
+    // When receiving OG usernames list from the server, render and save to cookie.
+    socket.on("ogUsernames", (ogStore) => {
+      renderOGList(ogStore);
+      saveOGListToCookie(ogStore);
+    });
+    
     redirectBackBtn.addEventListener("click", () => {
       window.location.href = "index.html";
     });

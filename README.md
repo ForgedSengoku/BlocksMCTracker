@@ -18,7 +18,7 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
 - **Pink Theme** – A sleek pink-colored UI for a fresh look.
 - **Erase All Player Usernames** – Useful for clearing space when tracking thousands of usernames.
 - **Lightweight** – Doesn’t require many resources since it’s only a ban checker tool.
-- **Local Hosting** – Defaults to `localhost:5052` for quick setup and testing.
+- **Local Hosting** – Defaults to `localhost:3052` for quick setup and testing.
 - **Automatic Updates** – Continuously refreshes player status without manual intervention.
 - **Cookie Storage** – Stores cookies locally for session persistence (no external databases required).
 - **Desktop Version Available (Windows Only)** – An easy-to-install version for Windows users.

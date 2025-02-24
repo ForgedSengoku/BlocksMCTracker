@@ -92,14 +92,14 @@ If you wish to fork, modify, or decompile the project further, follow these step
 3. **Install Dependencies:**  
    Install the required packages using:
    ```bash
-   npm install electron mojang-api express socket.io mineflayer
+   npm install
    ```
 
 4. **Make Your Modifications:**  
    Update the code, add features, or change configurations as needed. Your changes will take effect after restarting the app.
 
 5. **Run Your Version:**  
-   For testing, simply run:
+   For testing to open electron, simply run:
    ```bash
    npm start
    ```
@@ -107,7 +107,7 @@ If you wish to fork, modify, or decompile the project further, follow these step
 6. **Build the App:**  
    To compile your modified version into an executable, run:
    ```bash
-   npm run app:dist
+   yarn app:dist
    ```
 
 Below is an example of the `package.json` file used for building the app with Electron:

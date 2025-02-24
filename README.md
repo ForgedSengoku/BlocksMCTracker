@@ -141,11 +141,13 @@ Below is an example of the `package.json` file used for building the app with El
   },
   "build": {
     "appId": "com.blocksmctracker.app",
+    "productName": "BlocksMC Tracker",
     "files": [
       "server.js",
       "bot.js",
       "namesniper.js",
       "package.json",
+      "preload.json",
       "public/**/*"
     ],
     "win": {
@@ -153,8 +155,9 @@ Below is an example of the `package.json` file used for building the app with El
       "icon": "public/icon.ico"
     }
   },
-  "description": ""
+  "description": "Tracker APP"
 }
+
 ```
 
 ---

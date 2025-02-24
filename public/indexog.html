@@ -2,8 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OG Username Tracker 1.1</title>
+  <title>OG Username Tracker 1.2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Override native dialogs to use Electron's custom dialogs -->
+  <script>
+    if (window.electronAPI) {
+      window.alert = function(message) {
+        return window.electronAPI.alert(message);
+      };
+      window.confirm = function(message) {
+        return window.electronAPI.confirm(message);
+      };
+    }
+  </script>
   <style>
     /* ---------- Base Styles (Same as index.html) ---------- */
     body {
@@ -171,9 +182,11 @@
   </style>
 </head>
 <body>
-  <!-- Audio element now uses accountclaimed.mp3 -->
+  <!-- Audio elements -->
+  <!-- This sound plays when monitoring starts -->
+  <audio id="ogTrackStartSound" src="ogTrackStart.mp3" preload="auto"></audio>
+  <!-- Existing sound elements -->
   <audio id="claimSound" src="accountclaimed.mp3" preload="auto"></audio>
-  <!-- Added error sound element for Error.mp3 -->
   <audio id="errorSound" src="Error.mp3" preload="auto"></audio>
   
   <div id="themeToggle">Theme: Legacy</div>
@@ -194,6 +207,7 @@
     <br>
     <button id="redirectBackBtn">Back to Tracker Tool</button>
   </div>
+  
   <script src="/socket.io/socket.io.js"></script>
   <script>
     // Cookie utility functions
@@ -321,6 +335,13 @@
     
     socket.on("namesniperInfo", (message) => {
       namesniperStatus.innerHTML = `<span style="color: blue;">${message}</span>`;
+      // If monitoring started, play the ogTrackStart sound (only once)
+      if(message.indexOf("Monitoring started. Currently checking account:") === 0) {
+        const ogSound = document.getElementById("ogTrackStartSound");
+        if(ogSound && ogSound.paused) {
+          ogSound.play();
+        }
+      }
     });
     socket.on("namesniperAlert", (message) => {
       namesniperStatus.innerHTML = `<span style="color: orange;">${message}</span>`;
@@ -335,7 +356,7 @@
     socket.on("namesniperError", (message) => {
       namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;
       startNamesniperBtn.disabled = false;
-      // Play error sound when an error occurs (including invalid UUID error)
+      // Play error sound when an error occurs.
       document.getElementById("errorSound").play();
     });
     socket.on("namesniperStopped", (message) => {

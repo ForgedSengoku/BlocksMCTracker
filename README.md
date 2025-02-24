@@ -46,7 +46,7 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
 
 2. **Install Dependencies:**
    ```bash
-   npm install electron mojang-api express socket.io mineflayer
+   npm install
    ```
 
 3. **Testing the App:**
@@ -59,7 +59,7 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
 4. **Building the App:**
    To compile the app into an executable (.exe) file for Windows, run:
    ```bash
-   npm run app:dist
+   yarn app:dist
    ```
 
 ### Mobile (Android APK) Setup

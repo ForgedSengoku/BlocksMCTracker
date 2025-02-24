@@ -147,7 +147,7 @@ Below is an example of the `package.json` file used for building the app with El
       "bot.js",
       "namesniper.js",
       "package.json",
-      "preload.json",
+      "preload.js",
       "public/**/*"
     ],
     "win": {

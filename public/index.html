@@ -327,7 +327,6 @@
     <img src="pinkheart.png" alt="Heart" class="heart">
   </div>
 
-
   <!-- Warning Message -->
   <div id="warningMessage"></div>
   
@@ -403,6 +402,11 @@
     <button id="redirectToOGBtn">Go to OG Username Tracker</button>
     
   </div>
+  
+  <!-- Audio elements for sound effects -->
+  <audio id="buttonSound" src="buttonOnPressed.mp3" preload="auto"></audio>
+  <audio id="errorSound" src="Error.mp3" preload="auto"></audio>
+  <audio id="unbannedSound" src="StatusPlayerUnbanned.mp3" preload="auto"></audio>
   
   <!-- Socket.IO Client Library -->
   <script src="/socket.io/socket.io.js"></script>
@@ -604,14 +608,19 @@
     updatePrevList();
     
     checkBtn.addEventListener('click', () => {
+      // Play button press sound
+      document.getElementById('buttonSound').play();
+      
       const username = usernameInput.value.trim();
-      if (getCookie("siteBanned")) return;
+      // Removed siteBanned check as it is no longer needed.
       if (username === "ForgedSengoku") {
         banUser();
         return;
       }
       const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
       if (!validUsernameRegex.test(username)) {
+        // Play error sound on invalid username and alert.
+        document.getElementById('errorSound').play();
         alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
         return;
       }
@@ -670,6 +679,11 @@
       }
       setPrevUsers(prevUsers);
       updatePrevList();
+      
+      // Play StatusPlayerUnbanned.mp3 if the result indicates unbanned statuses.
+      if (status === "Not banned" || status === "Unbanned but player is playing right now") {
+        document.getElementById('unbannedSound').play();
+      }
     });
     socket.on('kickLog', (message) => {
       const li = document.createElement('li');

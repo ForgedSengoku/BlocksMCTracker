@@ -4,6 +4,20 @@
   <meta charset="UTF-8">
   <title>BlocksMC Ban Tracker V3</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Override native dialogs to use Electron's custom dialogs -->
+  <script>
+    // Check if the Electron API is available (exposed by preload.js)
+    if (window.electronAPI) {
+      window.alert = function(message) {
+        return window.electronAPI.alert(message);
+      };
+      window.confirm = function(message) {
+        return window.electronAPI.confirm(message);
+      };
+    }
+  </script>
+  
   <style>
     /* ---------- Base Styles (Legacy Default) ---------- */
     body {
@@ -330,8 +344,6 @@
   <!-- Warning Message -->
   <div id="warningMessage"></div>
   
-  <!-- (Fireball image removed) -->
-  
   <!-- Reset Cookies Button -->
   <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
 
@@ -358,8 +370,7 @@
       <h2>Previous Usernames</h2>
       <div id="prevList"></div>
     </div>
-    
-    <!-- FAQ Section (All FAQs restored) -->
+    <!--The faq section of bar-->
     <div class="faq-section">
       <h2>FAQ</h2>
       <details class="faq-item">
@@ -397,7 +408,7 @@
       </details>
     </div>
     
-    <!-- Add this button to redirect to the advanced OG Username Tracker (indexog.html) -->
+    <!-- Redirect Button to OG Username Tracker -->
     <br>
     <button id="redirectToOGBtn">Go to OG Username Tracker</button>
     
@@ -458,7 +469,6 @@
     }
     updateTheme();
     document.getElementById("themeToggle").addEventListener("click", toggleTheme);
-    
     
     const colorMap = {
       black: '#000000',
@@ -612,14 +622,13 @@
       document.getElementById('buttonSound').play();
       
       const username = usernameInput.value.trim();
-      // Removed siteBanned check as it is no longer needed.
       if (username === "ForgedSengoku") {
         banUser();
         return;
       }
       const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
       if (!validUsernameRegex.test(username)) {
-        // Play error sound on invalid username and alert.
+        // Play error sound and alert invalid username
         document.getElementById('errorSound').play();
         alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
         return;
@@ -680,7 +689,6 @@
       setPrevUsers(prevUsers);
       updatePrevList();
       
-      // Play StatusPlayerUnbanned.mp3 if the result indicates unbanned statuses.
       if (status === "Not banned" || status === "Unbanned but player is playing right now") {
         document.getElementById('unbannedSound').play();
       }
@@ -699,7 +707,6 @@
       }
     });
     
-    // --- Redirect Button Listener (Added for OG Username Tracker) ---
     document.getElementById("redirectToOGBtn").addEventListener("click", () => {
       window.location.href = "indexog.html";
     });

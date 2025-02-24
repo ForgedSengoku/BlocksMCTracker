@@ -173,6 +173,8 @@
 <body>
   <!-- Audio element now uses accountclaimed.mp3 -->
   <audio id="claimSound" src="accountclaimed.mp3" preload="auto"></audio>
+  <!-- Added error sound element for Error.mp3 -->
+  <audio id="errorSound" src="Error.mp3" preload="auto"></audio>
   
   <div id="themeToggle">Theme: Legacy</div>
   <div class="container">
@@ -333,6 +335,8 @@
     socket.on("namesniperError", (message) => {
       namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;
       startNamesniperBtn.disabled = false;
+      // Play error sound when an error occurs (including invalid UUID error)
+      document.getElementById("errorSound").play();
     });
     socket.on("namesniperStopped", (message) => {
       namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;

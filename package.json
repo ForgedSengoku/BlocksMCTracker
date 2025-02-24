@@ -26,6 +26,7 @@
   },
   "build": {
     "appId": "com.blocksmctracker.app",
+    "productName": "BlocksMC Tracker",
     "files": [
       "server.js",
       "bot.js",

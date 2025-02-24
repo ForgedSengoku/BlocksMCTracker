@@ -32,7 +32,7 @@
       "bot.js",
       "namesniper.js",
       "package.json",
-      "preload.json",
+      "preload.js",
       "public/**/*"
     ],
     "win": {

@@ -1,6 +1,6 @@
 
 ---
-# BlocksMC Tracker
+# BlocksMC Tracker WARNING THIS IS A WEBSITE VERSION THAT IS DISCONTINUED RN YOU are viewing currently the branch of website which is discontinued but still can be PLEASE JUST USE MY ELECRTORN App
 
 BlocksMC Tracker is an **Electron App** designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally. Note that the website version has been discontinued for a simpler setup. The project now provides an Electron desktop app for Windows and an APK for Android devices.
 

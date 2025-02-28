@@ -1,20 +1,24 @@
 // main.js - Electron main process with IPC (no Express/Socket.IO)
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-const { spawn } = require('child_process');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
-const semver = require('semver');
+const selfkick = require('./selfkick'); // Now a module
+// Forward selfkick logs to renderer
+selfkick.emitter.on('log', (msg) => {
+  if (mainWindow) {
+    mainWindow.webContents.send('selfkick-log', msg);
+  }
+});
 
 let mainWindow;
-let selfkickProcess = null; // Reference to the selfkick.js process
+let selfkickEnabled = false; // Flag for selfkick state
 
 // Ensure only one instance of the app is allowed
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', () => {i
-    // If another instance is opened, focus the existing window
+  app.on('second-instance', () => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
@@ -39,27 +43,19 @@ if (!gotTheLock) {
     createWindow();
 
     // ---- Auto Updater Setup ----
-    autoUpdater.setFeedURL({
-      provider: 'github',
-      owner: 'ForgedSengoku',
-      repo: 'BlocksMCTracker'
-    });
+    // The publish configuration is read from package.json "build.publish".
     autoUpdater.autoDownload = false;
     autoUpdater.on('update-available', (info) => {
-      const currentVersion = app.getVersion();
-      const newVersion = info.version;
-      if (semver.gt(newVersion, currentVersion)) {
-        dialog.showMessageBox({
-          type: 'info',
-          title: 'Update Available',
-          message: `An update detected!\nYour current version: ${currentVersion}\nNew version available: ${newVersion}\nClick OK to update.`,
-          buttons: ['OK', 'Cancel']
-        }).then(result => {
-          if (result.response === 0) {
-            autoUpdater.downloadUpdate();
-          }
-        });
-      }
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Available',
+        message: `An update is available!\nNew version: ${info.version}\nDo you want to download it now?`,
+        buttons: ['Download', 'Cancel']
+      }).then(result => {
+        if (result.response === 0) {
+          autoUpdater.downloadUpdate();
+        }
+      });
     });
     autoUpdater.on('update-downloaded', () => {
       autoUpdater.quitAndInstall();
@@ -126,36 +122,16 @@ if (!gotTheLock) {
 
   // ---- SelfKick IPC Handlers ----
   ipcMain.on('enable-selfkick', (event) => {
-    if (!selfkickProcess) {
-      selfkickProcess = spawn('node', [path.join(__dirname, 'selfkick.js')], { stdio: ['ignore', 'pipe', 'pipe'] });
-      selfkickProcess.stdout.on('data', (data) => {
-        const log = data.toString();
-        console.log(`selfkick stdout: ${log}`);
-        if (mainWindow) {
-          mainWindow.webContents.send('selfkick-log', log);
-        }
-      });
-      selfkickProcess.stderr.on('data', (data) => {
-        const log = data.toString();
-        console.error(`selfkick stderr: ${log}`);
-        if (mainWindow) {
-          mainWindow.webContents.send('selfkick-log', log);
-        }
-      });
-      selfkickProcess.on('exit', (code, signal) => {
-        console.log(`selfkick.js exited with code ${code} and signal ${signal}`);
-        selfkickProcess = null;
-        if (mainWindow) {
-          mainWindow.webContents.send('selfkick-status', 'stopped');
-        }
-      });
+    if (!selfkickEnabled) {
+      selfkick.startSelfkick();
+      selfkickEnabled = true;
       event.sender.send('selfkick-status', 'started');
     }
   });
   ipcMain.on('disable-selfkick', (event) => {
-    if (selfkickProcess) {
-      selfkickProcess.kill();
-      selfkickProcess = null;
+    if (selfkickEnabled) {
+      selfkick.stopSelfkick();
+      selfkickEnabled = false;
       event.sender.send('selfkick-status', 'stopped');
     }
   });

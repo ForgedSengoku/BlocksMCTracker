@@ -1,27 +1,25 @@
 
----
 # BlocksMC Tracker
 
-BlocksMC Tracker is an **Electron App** designed to monitor and track **player ban statuses** on BlocksMC in real-time. It features a sleek interface and can be easily hosted locally. Note that the website version has been discontinued for a simpler setup. The project now provides an Electron desktop app for Windows and an APK for Android devices.
+BlocksMC Tracker is an **Electron App** designed to monitor and track **player ban statuses** on BlocksMC in real-time. With the latest update, the app now uses **Electron IPC requests** instead of Express/Socket.IO, eliminating port conflicts and reducing unnecessary overhead. The user interface has been enhanced to include sound effects (e.g., when a button is pressed) for a more responsive experience. Additionally, the app now allows only a single instance to run at a time to conserve RAM and avoid memory leaks.
 
 > **Important:**
-> - **Mobile Users:** Electron is not supported in Termux. For Android devices, download the APK file from [GitHub Releases](https://github.com/ForgedSengoku/BlocksMCTracker/releases) for a simpler, streamlined setup.
-> - **Desktop Users:** This version is available **only for Windows**. Linux and macOS versions are not provided.
+> - **Desktop Users (Windows):** This update is available **only for Windows**. Linux and macOS versions are not provided.
+> - **Mobile Users:** The previous Android APK version is no longer maintained. If you need a mobile version, you can build your own solution using the source code.
 
 ---
 
 ## Features
 
 - **Real-Time Ban Monitoring** – Instantly check if a player is banned or unbanned on BlocksMC.
-- **Mobile-Friendly** – For Android users, an APK file is available for easy installation.
-- **Stylish Interface** – Clean and modern design for a seamless user experience.
-- **Pink Theme** – A sleek pink-colored UI for a fresh look.
-- **Erase All Player Usernames** – Useful for clearing space when tracking thousands of usernames.
-- **Lightweight** – Doesn’t require many resources since it’s only a ban checker tool.
-- **Local Hosting** – Defaults to `localhost:3052` for quick setup and testing.
-- **Automatic Updates** – Continuously refreshes player status without manual intervention.
-- **Cookie Storage** – Stores cookies locally for session persistence (no external databases required).
-- **Desktop Version Available (Windows Only)** – An easy-to-install version for Windows users.
+- **IPC-Based Communication** – Fully uses Electron's IPC requests for **faster, more reliable, and conflict-free** performance.
+- **Single Instance Lock** – Prevents multiple instances from opening, reducing RAM usage and avoiding duplicate bot requests.
+- **Sound Effects** – Integrated interactive sounds (e.g., for button presses) to enhance the user experience.
+- **Stylish Interface** – Clean and modern design with theme options (Legacy and Pink).
+- **Erase All Player Usernames** – Quickly clear stored usernames.
+- **Lightweight** – Optimized to use minimal resources since it’s solely a ban checker tool.
+- **Local Storage** – Uses localStorage to persist session data (no external databases required).
+- **Desktop Version Available (Windows Only)** – Easy-to-install version for Windows users.
 
 ---
 
@@ -29,7 +27,6 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
 
 - **Node.js** (v22 or higher) – Required due to Mineflayer package conflicts.
 - **npm** (Node Package Manager)
-- **Termux** (for Android users, though Electron is not supported there)
 - **Basic command-line knowledge**
 
 ---
@@ -48,31 +45,54 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
    ```bash
    npm install
    ```
+   *(Make sure `electron`, `electron-builder`, and other dependencies are correctly installed.)*
 
 3. **Testing the App:**
-   Press:
+   Launch the Electron app with:
    ```bash
    npm start
    ```
-   This command launches the Electron app for testing.
+   This command uses your updated `main.js` (which now only allows one instance and communicates via IPC).
 
 4. **Building the App:**
    To compile the app into an executable (.exe) file for Windows, run:
    ```bash
    yarn app:dist
    ```
+   *(This uses electron-builder based on your modified package.json, where the main field is set to "main.js".)*
 
-### Mobile (Android APK) Setup
+### Note for Mobile Users
 
-Since Electron cannot be installed in Termux, use the provided APK for Android:
+**There is no official Android version** of BlocksMC Tracker anymore. Electron does not support mobile platforms directly, and the APK is no longer maintained. However, if you’re inclined to create your own mobile version, the source code is available for you to modify and build as needed.
 
-1. **Download the APK:**  
-   Visit [GitHub Releases](https://github.com/ForgedSengoku/BlocksMCTracker/releases) and download the latest APK file.
-2. **Install the APK:**  
-   Open the APK file on your Android device and follow the installation prompts.
+---
 
-**Why It Works on a Phone:**  
-Android devices share similarities with ARM64 laptops, and while Node.js supports ARM, Electron cannot be used in Termux. The APK offers a streamlined mobile experience.
+## Changelog
+
+### Version 1.0.4
+
+- **Switched to Electron IPC:**  
+  Replaced all `socket.io` and `express` requests with IPC requests. This eliminates port conflicts (e.g., with users’ own Minecraft servers) and makes communication much faster.
+
+- **Single Instance Lock:**  
+  The app now allows only one instance at a time, preventing multiple windows from opening and reducing RAM usage.
+
+- **Sound Effects Integration:**  
+  Added sound effects for button presses and status notifications, improving user interactivity.
+
+- **Removed Unused Assets:**  
+  Cleared out unnecessary files to free up storage and reduce bloat.
+
+- **Updated index.html:**  
+  Modified the ban tracker interface to work entirely with IPC requests—ensuring that the "last checked" username and previous username lists update instantly.
+
+- **Package.json Modifications:**  
+  - Changed the main entry from `server.js` to `main.js`.
+  - Removed Express and Socket.IO dependencies.
+  - Updated build instructions; users now run `yarn app:dist` to build the app.
+  
+- **Versioning Update:**  
+  Corrected version numbering from previous releases (all earlier versions were marked as 1.0.0). The current release is **1.0.4**.
 
 ---
 
@@ -90,7 +110,6 @@ If you wish to fork, modify, or decompile the project further, follow these step
    ```
 
 3. **Install Dependencies:**  
-   Install the required packages using:
    ```bash
    npm install
    ```
@@ -99,7 +118,7 @@ If you wish to fork, modify, or decompile the project further, follow these step
    Update the code, add features, or change configurations as needed. Your changes will take effect after restarting the app.
 
 5. **Run Your Version:**  
-   For testing to open electron, simply run:
+   For testing, run:
    ```bash
    npm start
    ```
@@ -110,17 +129,17 @@ If you wish to fork, modify, or decompile the project further, follow these step
    yarn app:dist
    ```
 
-Below is an example of the `package.json` file used for building the app with Electron:
+Below is an example of the `package.json` file (with modifications) used for building the app:
 
 ```json
 {
   "name": "blocksmctracker",
-  "version": "1.0.0",
-  "main": "server.js",
+  "version": "1.0.4",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "serve": "node server.js",
+    "serve": "node main.js",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps"
@@ -129,11 +148,9 @@ Below is an example of the `package.json` file used for building the app with El
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2",
     "minecraft-api": "^0.0.3",
     "mineflayer": "^4.26.0",
-    "mojang-api": "^0.0.2",
-    "socket.io": "^4.8.1"
+    "mojang-api": "^0.0.2"
   },
   "devDependencies": {
     "electron": "^34.2.0",
@@ -143,7 +160,7 @@ Below is an example of the `package.json` file used for building the app with El
     "appId": "com.blocksmctracker.app",
     "productName": "BlocksMC Tracker",
     "files": [
-      "server.js",
+      "main.js",
       "bot.js",
       "namesniper.js",
       "package.json",
@@ -157,52 +174,35 @@ Below is an example of the `package.json` file used for building the app with El
   },
   "description": "Tracker APP"
 }
-
 ```
 
 ---
 
 ## Configuration
 
-- **Change Port:**  
-  Modify the `PORT` variable in `server.js` or use an environment variable:
-  ```bash
-  PORT=8080 node server.js
-  ```
-
-- **Cookies:**  
-  Session cookies are stored locally in your browser. Clear them via browser settings if needed.
-
----
-
-## Online Version
-
-Test the tracker without installing anything by visiting:  
-[**BlocksMC Tracker Online**](https://blocksmctracker.onrender.com/)
+- **Change Port (if needed):**  
+  Modify any port settings in your bot or namesniper modules, though with IPC there’s no server port to worry about.
+- **Storage:**  
+  Local session data is stored using localStorage, ensuring persistence without external databases.
 
 ---
 
 ## Privacy
 
-- Cookies are stored **only on your local device** for session persistence.
+- Session data (like local storage cookies) is stored **only on your local device**.
 - No user information is transmitted to external servers.
-- Only the player's username is sent to the server to verify ban status.
+- Only the player's username is sent to verify ban status.
 
 ---
 
 ## Troubleshooting
 
-- **Port Conflict:**  
-  If `localhost:5052` is unavailable, change the port in `server.js`.
-
+- **Port Conflicts:**  
+  With the switch to IPC requests, there are no longer any port conflicts. Ensure no legacy server processes are running.
 - **Installation Errors:**  
   Verify that **Node.js** and **npm** are installed correctly by running `node -v` and `npm -v`.
-
-- **Termux Issues:**  
-  For Android users attempting to use Termux, note that Electron is not supported. Use the provided APK instead. Also, update packages with:
-  ```bash
-  pkg update
-  ```
+- **Audio Issues:**  
+  Check that your audio file paths are correct and that your system supports HTML5 audio playback.
 
 ---
 

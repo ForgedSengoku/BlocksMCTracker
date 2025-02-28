@@ -1,11 +1,11 @@
 {
   "name": "blocksmctracker",
-  "version": "1.0.0",
-  "main": "server.js",
+  "version": "1.0.4",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "serve": "node server.js",
+    "serve": "node main.js",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps"
@@ -14,11 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2",
     "minecraft-api": "^0.0.3",
     "mineflayer": "^4.26.0",
-    "mojang-api": "^0.0.2",
-    "socket.io": "^4.8.1"
+    "mojang-api": "^0.0.2"
   },
   "devDependencies": {
     "electron": "^34.2.0",
@@ -28,7 +26,7 @@
     "appId": "com.blocksmctracker.app",
     "productName": "BlocksMC Tracker",
     "files": [
-      "server.js",
+      "main.js",
       "bot.js",
       "namesniper.js",
       "package.json",

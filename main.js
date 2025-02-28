@@ -1,6 +1,8 @@
 // main.js - Electron main process with IPC (no Express/Socket.IO)
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const { autoUpdater } = require('electron-updater');
+const semver = require('semver');
 
 let mainWindow;
 
@@ -30,7 +32,46 @@ if (!gotTheLock) {
     mainWindow.on('closed', () => { mainWindow = null; });
   }
 
-  app.whenReady().then(createWindow);
+  app.whenReady().then(() => {
+    createWindow();
+
+    // ---- Auto Updater Setup ----
+    // Set the feed URL to your GitHub releases page
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: 'ForgedSengoku',
+      repo: 'BlocksMCTracker'
+    });
+
+    // Disable auto-download so we can prompt the user
+    autoUpdater.autoDownload = false;
+
+    autoUpdater.on('update-available', (info) => {
+      const currentVersion = app.getVersion();
+      const newVersion = info.version;
+      // Check if the new version is greater than the current version
+      if (semver.gt(newVersion, currentVersion)) {
+        dialog.showMessageBox({
+          type: 'info',
+          title: 'Update Available',
+          message: `An update detected!\nYour current version: ${currentVersion}\nNew version available: ${newVersion}\nClick OK to update.`,
+          buttons: ['OK', 'Cancel']
+        }).then(result => {
+          if (result.response === 0) { // User clicked OK
+            autoUpdater.downloadUpdate();
+          }
+        });
+      }
+    });
+
+    // Once the update is downloaded, quit and install the update
+    autoUpdater.on('update-downloaded', () => {
+      autoUpdater.quitAndInstall();
+    });
+
+    // Check for updates from the GitHub repository releases page
+    autoUpdater.checkForUpdates();
+  });
 
   // ---- IPC Handlers for Ban Tracker ----
   ipcMain.on('checkBan', (event, username) => {
@@ -92,8 +133,13 @@ if (!gotTheLock) {
     event.returnValue = result === 1;
   });
 
+  // Ensure all processes are closed when the app is closed to fix lingering background instances
   app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    app.quit();
+  });
+
+  app.on('quit', () => {
+    process.exit(0);
   });
 
   app.on('activate', () => {

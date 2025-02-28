@@ -33,7 +33,7 @@ bot.on('spawn', () => {
   if (bot && typeof bot.quit === 'function') {
     bot.quit("Spawning complete, logging out.");
   }
-  // After 2.3 seconds, send the final result message with the username in red
+  // After 3.3 seconds, send the final result message with the username in red
   setTimeout(() => {
     sendFinalResult(`The player <span style="color:red;">${username}</span> is currently not banned!`);
   }, 2300);

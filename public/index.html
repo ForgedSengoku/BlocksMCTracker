@@ -7,7 +7,6 @@
   
   <!-- Override native dialogs to use Electron's custom dialogs -->
   <script>
-    // Check if the Electron API is available (exposed by preload.js)
     if (window.electronAPI) {
       window.alert = function(message) {
         return window.electronAPI.alert(message);
@@ -26,17 +25,14 @@
       padding: 20px;
       overflow-x: hidden;
     }
-    /* Legacy theme (default) */
     body.legacy-theme {
       background-color: #f5f5f5;
       color: #000;
     }
-    /* Pink (Valentine’s) theme */
     body.pink-theme {
       background-color: #000;
       color: #fff;
     }
-    /* ---------- Container ---------- */
     .container {
       max-width: 600px;
       margin: auto;
@@ -47,12 +43,10 @@
       position: relative;
       z-index: 1;
     }
-    /* Adjust container for pink theme */
     body.pink-theme .container {
       background: #222;
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
     }
-    /* ---------- Heading with Icon ---------- */
     h1 {
       display: flex;
       align-items: center;
@@ -64,7 +58,6 @@
       -webkit-text-fill-color: transparent;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-    /* Pink theme heading override */
     body.pink-theme h1 {
       background: linear-gradient(45deg, #e91e63, #ec407a, #f06292);
       -webkit-background-clip: text;
@@ -76,7 +69,6 @@
       height: auto;
       margin-right: 10px;
     }
-    /* ---------- Form Elements ---------- */
     label {
       display: block;
       margin-bottom: 5px;
@@ -118,7 +110,6 @@
     body.pink-theme button:hover:not(:disabled) {
       background-color: #ec407a;
     }
-    /* ---------- Ban Log ---------- */
     .ban-log {
       margin-top: 20px;
       padding: 10px;
@@ -142,7 +133,6 @@
       margin-bottom: 5px;
       font-size: 14px;
     }
-    /* ---------- Last Check Info ---------- */
     #lastCheckInfo {
       margin-bottom: 20px;
       padding: 10px;
@@ -155,7 +145,6 @@
       border: 1px solid #ec407a;
       color: #ff80ab;
     }
-    /* ---------- Previous Usernames ---------- */
     #prevContainer {
       margin-top: 20px;
       background: #e8eaf6;
@@ -216,7 +205,6 @@
       background-color: #999;
       cursor: not-allowed;
     }
-    /* ---------- Reset Cookies Button ---------- */
     .reset-cookies-btn {
       position: absolute;
       top: 10px;
@@ -233,7 +221,6 @@
     .reset-cookies-btn:hover {
       background-color: #c9302c;
     }
-    /* ---------- FAQ Section ---------- */
     .faq-section {
       background: #111;
       color: #eee;
@@ -268,7 +255,6 @@
       padding-left: 20px;
       line-height: 1.4;
     }
-    /* ---------- Theme Toggle Button (Top Left) ---------- */
     #themeToggle {
       position: absolute;
       top: 10px;
@@ -288,7 +274,6 @@
       background: rgba(233,30,99,0.8);
       color: #fff;
     }
-    /* ---------- Floating Hearts (Pink Theme Only) ---------- */
     #heartsContainer {
       position: fixed;
       top: 0;
@@ -321,7 +306,6 @@
     .heart:nth-child(2) { left: 40%; animation-delay: 2s; }
     .heart:nth-child(3) { left: 70%; animation-delay: 4s; }
     .heart:nth-child(4) { left: 85%; animation-delay: 6s; }
-    /* ---------- Responsive Adjustments ---------- */
     @media (max-width: 600px) {
       .container { padding: 15px; }
       h1 { font-size: 2em; }
@@ -370,7 +354,7 @@
       <h2>Previous Usernames</h2>
       <div id="prevList"></div>
     </div>
-    <!--The faq section of bar-->
+    <!-- FAQ Section -->
     <div class="faq-section">
       <h2>FAQ</h2>
       <details class="faq-item">
@@ -396,11 +380,11 @@
       </details>
       <details class="faq-item">
         <summary>How to use name spoofer in VAPE V4 against your second instance of bot?</summary>
-        <p>To do this, navigate to the Minecraft friends section (make sure Vape Friends is not enabled), then add your bot's username like: <code>nwath FakeUsername</code> so that it changes from “nwath” to “FakeUsername.” If it still doesn’t work, try enabling the spoofAlias in the settings icon. If you need more help, check this video: <iframe width="300" height="230" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></a></p>
+        <p>To do this, navigate to the Minecraft friends section (make sure Vape Friends is not enabled), then add your bot's username like: <code>nwath FakeUsername</code> so that it changes from “nwath” to “FakeUsername.” If it still doesn’t work, try enabling the spoofAlias in the settings icon. If you need more help, check this video: <iframe width="300" height="230" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
       </details>
       <details class="faq-item">
         <summary>Why this website has 2 themes? Pink and Legacy?</summary>
-        <p>Becuase we created Pink as a for girls design who is a gamer girl and legacy theme can be still be used but very practile to have 2 themes atleast</p>
+        <p>Becuase we created Pink as a for girls design who is a gamer girl and legacy theme can be still used but very practile to have 2 themes atleast</p>
       </details>
       <details class="faq-item">
         <summary>Why did you open this website if we can check through minecraft client whats a point?</summary>
@@ -419,28 +403,13 @@
   <audio id="errorSound" src="Error.mp3" preload="auto"></audio>
   <audio id="unbannedSound" src="StatusPlayerUnbanned.mp3" preload="auto"></audio>
   
-  <!-- Socket.IO Client Library -->
-  <script src="/socket.io/socket.io.js"></script>
   <script>
-    /* ---------- Cookie Utility Functions ---------- */
+    /* ---------- Storage Utility Functions (using localStorage) ---------- */
     function setCookie(name, value, days) {
-      var expires = "";
-      if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-      }
-      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+      localStorage.setItem(name, value);
     }
     function getCookie(name) {
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(';');
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-      }
-      return null;
+      return localStorage.getItem(name);
     }
     
     /* ---------- Theme Toggle Functions ---------- */
@@ -517,7 +486,7 @@
       return parseMinecraftMessage(message);
     }
     
-    const socket = io();
+    // Use IPC via electronAPI
     const checkBtn = document.getElementById('checkBtn');
     const usernameInput = document.getElementById('username');
     const logList = document.getElementById('logList');
@@ -546,7 +515,7 @@
         const div = document.createElement("div");
         div.className = "prevEntry";
         
-        // Create and add the player's head image (32px)
+        // Player head avatar
         const headImg = document.createElement("img");
         headImg.src = "https://minotar.net/helm/" + user;
         headImg.alt = user + "'s head";
@@ -618,23 +587,18 @@
     updatePrevList();
     
     checkBtn.addEventListener('click', () => {
-      // Play button press sound
-      document.getElementById('buttonSound').play();
+      document.getElementById('buttonSound').play().catch(console.error);
       
       const username = usernameInput.value.trim();
-      if (username === "ForgedSengoku") {
-        banUser();
-        return;
-      }
       const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
       if (!validUsernameRegex.test(username)) {
-        // Play error sound and alert invalid username
-        document.getElementById('errorSound').play();
+        document.getElementById('errorSound').play().catch(console.error);
         alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
         return;
       }
       currentUsername = username;
       setCookie("lastUsername", username, 7);
+      updateLastCheckInfo();
       
       const prevUsers = getPrevUsers();
       if (prevUsers[username]) {
@@ -657,10 +621,10 @@
       }, 7000);
       
       logList.innerHTML = "";
-      socket.emit('checkBan', username);
+      window.electronAPI.sendCheckBan(username);
     });
     
-    socket.on('banResult', (message) => {
+    window.electronAPI.onBanResult((message) => {
       if (message.includes("Error: read ECONNRESET")) {
         document.getElementById("warningMessage").style.display = "block";
         document.getElementById("warningMessage").textContent = "WARNING: Maybe my internet is lagging? OR server is down?";
@@ -672,8 +636,10 @@
       const li = document.createElement('li');
       li.innerHTML = renderMessage(message);
       logList.appendChild(li);
+      
       setCookie("lastBanStatus", message, 7);
       updateLastCheckInfo();
+      
       const prevUsers = getPrevUsers();
       let status = "";
       if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
@@ -690,10 +656,10 @@
       updatePrevList();
       
       if (status === "Not banned" || status === "Unbanned but player is playing right now") {
-        document.getElementById('unbannedSound').play();
+        document.getElementById('unbannedSound').play().catch(console.error);
       }
     });
-    socket.on('kickLog', (message) => {
+    window.electronAPI.onKickLog((message) => {
       const li = document.createElement('li');
       li.innerHTML = renderMessage(message);
       logList.appendChild(li);
@@ -701,7 +667,7 @@
     
     document.getElementById('resetCookiesBtn').addEventListener('click', function() {
       if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
-        setCookie("prevUsers", "", -1);
+        localStorage.removeItem("prevUsers");
         updatePrevList();
         alert("All list of previously usernames were reset.");
       }
@@ -710,7 +676,6 @@
     document.getElementById("redirectToOGBtn").addEventListener("click", () => {
       window.location.href = "indexog.html";
     });
-    
   </script>
 </body>
 </html>

@@ -19,5 +19,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onNamesniperClaimed: (callback) => ipcRenderer.on('namesniperClaimed', (event, message) => callback(message)),
   onNamesniperError: (callback) => ipcRenderer.on('namesniperError', (event, message) => callback(message)),
   onNamesniperStopped: (callback) => ipcRenderer.on('namesniperStopped', (event, message) => callback(message)),
-  onOGUsernames: (callback) => ipcRenderer.on('ogUsernames', (event, usernames) => callback(usernames))
+  onOGUsernames: (callback) => ipcRenderer.on('ogUsernames', (event, usernames) => callback(usernames)),
+
+  // SelfKick IPC
+  enableSelfKick: () => ipcRenderer.send('enable-selfkick'),
+  disableSelfKick: () => ipcRenderer.send('disable-selfkick'),
+  onSelfKickStatus: (callback) => ipcRenderer.on('selfkick-status', (event, status) => callback(status)),
+  onSelfKickLog: (callback) => ipcRenderer.on('selfkick-log', (event, log) => callback(log))
 });

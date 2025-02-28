@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BlocksMC Ban Tracker V3</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
   <!-- Override native dialogs to use Electron's custom dialogs -->
   <script>
     if (window.electronAPI) {
@@ -370,11 +368,6 @@
         <p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Because of authentication issues and the premium requirement, an account can log in and then be kicked. Instead, to determine if an account is banned, you can track playtime changes.</p>
       </details>
       <details class="faq-item">
-        <summary>What to do if egirl twerking on me?</summary>
-        <p>lovely egirl simp just shows you her ass 💓💓 just watch it :) you should acutally let her twerk on you. and you have right to let girls to twerk on you :) in valtaine day i'm a egirl and i'll be your egirl that will twerk in your school or even fart at you in toliet in your face at school</p>
-        <img src="girl.png" alt="Girl" style="width:450px; display:block; margin-top:10px;">
-      </details>
-      <details class="faq-item">
         <summary>How to get someone banned?</summary>
         <p>Ok, here's how to get someone banned: download a name spoofer mod and a skin spoofer mod—or use Vape V4. Then, on your main Minecraft instance (the one you'll be recording), download LiquidBounce (probably my best recommendation for faking clips) and install Baritone from its GitHub (https://github.com/cabaletta/baritone, make sure you download the latest version). For LiquidBounce, you might need an extra mod (like Kotlin) to make it work; enable it and then type <code>#follow player *YourMainInstanceIGN*</code>. Once LiquidBounce has Verus Combat Disabler (choose “VerusCombat Disabler” and do not enable “waitUntilCombat”) and Ping Spoofer enabled, if the target pathfinds then start recording a clip—aim for a clip of 15 seconds without knockback and with a bot hitting like a real player. Finally, upload your clip via blocksmc.com/report (you can host it on YouTube or Streamlabs). Note: This typically only works on default-ranked players. If the target is a moderator or has purchased a rank (or with tokens), staff might not ban them.</p>
       </details>
@@ -383,18 +376,30 @@
         <p>To do this, navigate to the Minecraft friends section (make sure Vape Friends is not enabled), then add your bot's username like: <code>nwath FakeUsername</code> so that it changes from “nwath” to “FakeUsername.” If it still doesn’t work, try enabling the spoofAlias in the settings icon. If you need more help, check this video: <iframe width="300" height="230" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
       </details>
       <details class="faq-item">
-        <summary>Why this website has 2 themes? Pink and Legacy?</summary>
+        <summary>Why this application has 2 themes? Pink and Legacy?</summary>
         <p>Becuase we created Pink as a for girls design who is a gamer girl and legacy theme can be still used but very practile to have 2 themes atleast</p>
       </details>
       <details class="faq-item">
-        <summary>Why did you open this website if we can check through minecraft client whats a point?</summary>
-        <p>I thought it was funny to create this website, For first 1. Instant access no need to go to alt manager, To waste your time this eliminates in time waste 2. Advanced features of tracking, We will have features like name claimer that allows you to claim a IGN While this feature has been not released it works for specifally when a username gets changed in premium account and hasnt trasnfered their stats so you login with play.blocksmc.com and then a bot stays in account for 24/7, This might reqiure a key cookie and it will create a password of account that will be stored in our database and login and all details of this claimed username is stored, Do not change the password, Make sure the bot can connect if a player of account you logout then you risk of premium.blocksmc.com that main owner of account trasnfer stats and lock you, So you once done playing logout instantly to make sure bot can connect to account and then he logins with password and stays 24/7 even if your internet cuts so use our as a soloution</p>
+        <summary>Why did you open this application if we can check through minecraft client whats a point?</summary>
+        <p>I thought it was funny to create this application, For first 1. Instant access no need to go to alt manager, To waste your time this eliminates in time waste 2. Advanced features of tracking, We will have features like name claimer that allows you to claim a IGN While this feature has been not released it works for specifally when a username gets changed in premium account and hasnt trasnfered their stats so you login with play.blocksmc.com and then a bot stays in account for 24/7, This might reqiure a key cookie and it will create a password of account that will be stored in our database and login and all details of this claimed username is stored, Do not change the password, Make sure the bot can connect if a player of account you logout then you risk of premium.blocksmc.com that main owner of account trasnfer stats and lock you, So you once done playing logout instantly to make sure bot can connect to account and then he logins with password and stays 24/7 even if your internet cuts so use our as a soloution</p>
       </details>
     </div>
-    
     <!-- Redirect Button to OG Username Tracker -->
     <br>
     <button id="redirectToOGBtn">Go to OG Username Tracker</button>
+    
+    <!-- SelfKick Section -->
+    <div id="selfkickSection">
+      <h2 style="font-size: 20px;">
+        <img src="selfkicklogo.png" alt="SelfKick Logo" style="height:40px; width:auto; vertical-align:middle;">
+        SelfKicker Tool
+      </h2>
+      <div style="font-size: 20px;">
+        Buttons: [<button id="enableSelfKickBtn">Enable now</button>] [<button id="disableSelfKickBtn" disabled>Disable</button>]
+      </div>
+      <p id="selfKickStatusMsg" style="font-size: 20px;"></p>
+      <pre id="selfkickLog" style="font-size: 20px; max-height:150px; overflow:auto; background:#222; color:#fff; padding:5px;"></pre>
+    </div>
     
   </div>
   
@@ -675,6 +680,38 @@
     
     document.getElementById("redirectToOGBtn").addEventListener("click", () => {
       window.location.href = "indexog.html";
+    });
+    
+    // ----- SelfKick Functionality -----
+    const enableSelfKickBtn = document.getElementById("enableSelfKickBtn");
+    const disableSelfKickBtn = document.getElementById("disableSelfKickBtn");
+    const selfKickStatusMsg = document.getElementById("selfKickStatusMsg");
+    
+    enableSelfKickBtn.addEventListener("click", () => {
+      window.electronAPI.enableSelfKick();
+    });
+    
+    disableSelfKickBtn.addEventListener("click", () => {
+      window.electronAPI.disableSelfKick();
+    });
+    
+    window.electronAPI.onSelfKickStatus((status) => {
+      console.log("SelfKick status:", status);
+      if (status === "started") {
+         selfKickStatusMsg.textContent = "Successfully started selfkick. NOTE: This works only if somebody is in your home and you want to do this then and by using 4 accounts of bots to kick everyone from your IP. This is fun to do but he might get mad.";
+         enableSelfKickBtn.disabled = true;
+         disableSelfKickBtn.disabled = false;
+      } else if (status === "stopped") {
+         selfKickStatusMsg.textContent = "Selfkick stopped.";
+         enableSelfKickBtn.disabled = false;
+         disableSelfKickBtn.disabled = true;
+      }
+    });
+    
+    // Listen for selfkick logs and append them to the pre tag
+    window.electronAPI.onSelfKickLog((log) => {
+      const logContainer = document.getElementById('selfkickLog');
+      logContainer.textContent += log;
     });
   </script>
 </body>

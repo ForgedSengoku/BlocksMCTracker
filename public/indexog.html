@@ -208,7 +208,7 @@
     <button id="redirectBackBtn">Back to Tracker Tool</button>
   </div>
   
-  <script src="/socket.io/socket.io.js"></script>
+  <!-- Removed Socket.IO Client Library -->
   <script>
     // Cookie utility functions
     function setCookie(name, value, days) {
@@ -273,7 +273,7 @@
     updateTheme();
     document.getElementById("themeToggle").addEventListener("click", toggleTheme);
     
-    const socket = io();
+    // Replace Socket.IO with IPC using electronAPI
     const startNamesniperBtn = document.getElementById("startNamesniperBtn");
     const stopNamesniperBtn = document.getElementById("stopNamesniperBtn");
     const namesniperStatus = document.getElementById("namesniperStatus");
@@ -302,7 +302,7 @@
         stopBotBtn.className = "stopBotBtn";
         stopBotBtn.textContent = "Stop Bot";
         stopBotBtn.addEventListener("click", () => {
-          socket.emit("stopNamesniper");
+          window.electronAPI.sendStopNamesniper();
         });
         entryDiv.appendChild(stopBotBtn);
         claimedAccountsList.appendChild(entryDiv);
@@ -323,17 +323,17 @@
       }
       // Disable Start button while tracking is active.
       startNamesniperBtn.disabled = true;
-      socket.emit("startNamesniper", { targetUuid: targetUuid });
-      socket.emit("getOGUsernames");
+      window.electronAPI.sendStartNamesniper(targetUuid);
+      window.electronAPI.sendGetOGUsernames();
     });
     
     stopNamesniperBtn.addEventListener("click", () => {
       if(confirm("Are you sure you want to stop the bot?")){
-        socket.emit("stopNamesniper");
+        window.electronAPI.sendStopNamesniper();
       }
     });
     
-    socket.on("namesniperInfo", (message) => {
+    window.electronAPI.onNamesniperInfo((message) => {
       namesniperStatus.innerHTML = `<span style="color: blue;">${message}</span>`;
       // If monitoring started, play the ogTrackStart sound (only once)
       if(message.indexOf("Monitoring started. Currently checking account:") === 0) {
@@ -343,30 +343,29 @@
         }
       }
     });
-    socket.on("namesniperAlert", (message) => {
+    window.electronAPI.onNamesniperAlert((message) => {
       namesniperStatus.innerHTML = `<span style="color: orange;">${message}</span>`;
     });
-    socket.on("namesniperClaimed", (message) => {
+    window.electronAPI.onNamesniperClaimed((message) => {
       namesniperStatus.innerHTML = `<span style="color: green;">${message}</span>`;
       startNamesniperBtn.disabled = true;
       // Play notification sound upon claim.
       document.getElementById("claimSound").play();
-      socket.emit("getOGUsernames");
+      window.electronAPI.sendGetOGUsernames();
     });
-    socket.on("namesniperError", (message) => {
+    window.electronAPI.onNamesniperError((message) => {
       namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;
       startNamesniperBtn.disabled = false;
-      // Play error sound when an error occurs.
       document.getElementById("errorSound").play();
     });
-    socket.on("namesniperStopped", (message) => {
+    window.electronAPI.onNamesniperStopped((message) => {
       namesniperStatus.innerHTML = `<span style="color: red;">${message}</span>`;
       startNamesniperBtn.disabled = false;
-      socket.emit("getOGUsernames");
+      window.electronAPI.sendGetOGUsernames();
     });
     
-    // When receiving OG usernames list from the server, render and save to cookie.
-    socket.on("ogUsernames", (ogStore) => {
+    // When receiving OG usernames list from the main process, render and save to cookie.
+    window.electronAPI.onOGUsernames((ogStore) => {
       renderOGList(ogStore);
       saveOGListToCookie(ogStore);
     });

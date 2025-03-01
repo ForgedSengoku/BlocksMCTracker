@@ -27,17 +27,17 @@ function createBotInstance(username, callback) {
     callback({ type: 'log', message });
   }
 
-// If the bot spawns, it means the player is not banned
-bot.on('spawn', () => {
-  // Immediately logout to reduce traffic load
-  if (bot && typeof bot.quit === 'function') {
-    bot.quit("Spawning complete, logging out.");
-  }
-  // After 3.3 seconds, send the final result message with the username in red
-  setTimeout(() => {
-    sendFinalResult(`The player <span style="color:red;">${username}</span> is currently not banned!`);
-  }, 2300);
-});
+  // If the bot spawns, it means the player is not banned
+  bot.on('spawn', () => {
+    // Immediately logout to reduce traffic load
+    if (bot && typeof bot.quit === 'function') {
+      bot.quit("Spawning complete, logging out.");
+    }
+    // After 3.3 seconds, send the final result message with the username in red
+    setTimeout(() => {
+      sendFinalResult(`The player <span style="color:red;">${username}</span> is currently not banned!`);
+    }, 2300);
+  });
 
   // Listen for chat messages to detect ban messages
   bot.on('message', (messageObj) => {
@@ -50,18 +50,7 @@ bot.on('spawn', () => {
     const msgText = reason.toString();
     console.log('Kicked:', msgText);
     logEvent('Kicked: ' + msgText);
-
-    if (msgText.includes('You are banned from the server')) {
-      sendFinalResult('IP banned: ' + msgText);
-    } else if (msgText.includes('You are banned from BlocksMC network')) {
-      sendFinalResult('Banned from BlocksMC network: ' + msgText);
-    } else if (msgText.includes('Please connect using PREMIUM.BLOCKSMC.COM')) {
-      sendFinalResult(
-        'Premium account: Cannot determine ban status. (Requires premium authentication.)'
-      );
-    } else {
-      sendFinalResult('Kicked: ' + msgText);
-    }
+    sendFinalResult('Kicked: ' + msgText);
   });
 
   // Handle errors
@@ -71,15 +60,6 @@ bot.on('spawn', () => {
       sendFinalResult('Error: ' + err.message);
     }
   });
-
-  // Timeout after 60 seconds if no final result is detected
-  setTimeout(() => {
-    if (!finalResultSent) {
-      sendFinalResult(
-        'No ban message detected. Possibly not banned or a premium account.'
-      );
-    }
-  }, 60000);
 }
 
 module.exports = { createBotInstance };

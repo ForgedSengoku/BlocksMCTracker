@@ -28,9 +28,10 @@ if (!gotTheLock) {
 
   function createWindow() {
     mainWindow = new BrowserWindow({
+      autoHideMenuBar: true, // Hide the default Electron menu bar
       width: 1200,
       height: 800,
-      title: 'BlocksMC Tracker Application',
+      title: 'BlocksMC Tracker',
       webPreferences: {
         contextIsolation: true,
         preload: path.join(__dirname, 'preload.js')

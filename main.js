@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
 const selfkick = require('./selfkick'); // Now a module
+
 // Forward selfkick logs to renderer
 selfkick.emitter.on('log', (msg) => {
   if (mainWindow) {
@@ -44,22 +45,62 @@ if (!gotTheLock) {
 
     // ---- Auto Updater Setup ----
     // The publish configuration is read from package.json "build.publish".
+    // Removed dev config settings.
+    
+    // Set autoDownload to false so we can prompt the user.
     autoUpdater.autoDownload = false;
+
     autoUpdater.on('update-available', (info) => {
+      console.log(`Update available: version ${info.version}`);
+      // Show a popup dialog to ask the user if they want to update now.
       dialog.showMessageBox({
         type: 'info',
-        title: 'Update Available',
-        message: `An update is available!\nNew version: ${info.version}\nDo you want to download it now?`,
-        buttons: ['Download', 'Cancel']
+        title: 'New update detected',
+        message: `A new version (${info.version}) is available. Do you want to update now?`,
+        buttons: ['Update Now', 'Later'],
+        defaultId: 0,
+        cancelId: 1
       }).then(result => {
         if (result.response === 0) {
+          console.log('User accepted update, starting download...');
           autoUpdater.downloadUpdate();
+        } else {
+          console.log('User postponed the update.');
         }
       });
     });
-    autoUpdater.on('update-downloaded', () => {
-      autoUpdater.quitAndInstall();
+
+    autoUpdater.on('update-downloaded', (info) => {
+      console.log('Update downloaded; quitting and installing update...');
+      const fs = require('fs');
+      const { spawn } = require('child_process');
+      const downloadsDir = "C:\\BlocksMC_TrackerData";
+      if (!fs.existsSync(downloadsDir)) {
+        fs.mkdirSync(downloadsDir, { recursive: true });
+      }
+      const fileName = path.basename(info.downloadedFile); // expecting a name like "BlocksMC-Tracker-Setup-1.0.8.exe"
+      const destinationFile = path.join(downloadsDir, fileName);
+      fs.copyFile(info.downloadedFile, destinationFile, (err) => {
+        if (err) {
+          console.error('Error copying update file: ', err);
+          return;
+        }
+        console.log(`Copied update file to: ${destinationFile}`);
+        // Execute the installer from the downloads directory
+        const child = spawn(destinationFile, [], {
+          detached: true,
+          stdio: 'ignore'
+        });
+        child.unref();
+        app.quit();
+      });
     });
+
+    autoUpdater.on('error', (err) => {
+      console.error('Auto updater error:', err);
+    });
+
+    // Start checking for updates
     autoUpdater.checkForUpdates();
   });
 

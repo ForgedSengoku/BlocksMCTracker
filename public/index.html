@@ -4,7 +4,7 @@
   <!-- L1 -->
   <meta charset="UTF-8">
   <!-- L2 -->
-  <title>BlocksMC Ban Tracker Website</title>
+  <title>BlocksMC Tracker Website</title>
   <!-- L3 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- L4 -->
@@ -223,13 +223,42 @@
     .reset-cookies-btn:hover {
       background-color: #c9302c;
     }
+    /* ---------- Download Section ---------- */
+    .download-note {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffcccc, #ffe6e6);
+      border: 2px solid #ff4d4d;
+      border-radius: 10px;
+      color: #b30000;
+      font-weight: bold;
+      text-align: center;
+    }
+    .download-note p {
+      margin: 10px 0;
+    }
+    .download-btn {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 12px 25px;
+      background: linear-gradient(45deg, #ff8c00, #ff0000);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .download-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #ff0000, #ff8c00);
+    }
     /* ---------- FAQ Section ---------- */
     .faq-section {
       background: #111;
       color: #eee;
       border-radius: 8px;
       padding: 20px;
-      margin-top: 20px;
+      margin-top: 40px; /* increased margin to push FAQ further down */
     }
     body.legacy-theme .faq-section {
       color: #eee;
@@ -317,17 +346,6 @@
       h1 { font-size: 2em; }
       button { font-size: 14px; padding: 8px 15px; }
     }
-    /* ---------- Note at the Bottom ---------- */
-    .download-note {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #ffe6e6;
-      border: 2px solid red;
-      border-radius: 8px;
-      color: red;
-      font-weight: bold;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
@@ -342,22 +360,7 @@
     <img src="pinkheart.png" alt="Heart" class="heart">
   </div>
   
-  <!-- Note at the website discontinued --> <!-- L109 -->
-  <div class="download-note">
-    Warning: This website is discontinued and won't get any updates! To get updates download our app from <a href="https://github.com/ForgedSengoku/BlocksMCTracker/releases" style="color: red; text-decoration: underline;">https://github.com/ForgedSengoku/BlocksMCTracker/releases</a><br>
-    In our electron app we have sounds and more features like OG Username Tracker, but the website is limited to ban tracker only!
-  </div>
-  
-  <!-- Audio elements for sound effects --> <!-- L116 -->
-  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio> <!-- L117 -->
-  <audio id="errorSound" src="Error.ogg" preload="auto"></audio> <!-- L118 -->
-  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio> <!-- L119 -->
-
-  <!-- Warning Message --> <!-- L121 -->
-  <div id="warningMessage"></div>
-  
-  <!-- Reset Cookies Button --> <!-- L123 -->
-  <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
+  <!-- (Original warning note removed from here) -->
 
   <div class="container"> <!-- L126 -->
     <h1>
@@ -383,7 +386,15 @@
       <div id="prevList"></div>
     </div>
     
-    <!-- FAQ Section (All FAQs restored) --> <!-- L148 -->
+    <!-- Download Section (Moved from top and redesigned) --> <!-- NEW -->
+    <div class="download-note">
+      <p>Warning: This website is discontinued and won't get any updates!</p>
+      <p>To get updates, download our app below:</p>
+      <a class="download-btn" href="https://github.com/ForgedSengoku/BlocksMCTracker/releases" target="_blank">Download our Electron App</a>
+      <p>In our electron app we have sounds and more features like OG Username Tracker, but the website is limited to ban tracker only!</p>
+    </div>
+    
+    <!-- FAQ Section (Moved further down) --> <!-- L148 -->
     <div class="faq-section">
       <h2>FAQ</h2>
       <details class="faq-item">

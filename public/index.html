@@ -16,14 +16,12 @@
   </script>
   
   <style>
-    /* ---------- Base Styles (Legacy Default) ---------- */
+    /* ---------- Base Styles ---------- */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
       overflow-x: hidden;
-    }
-    body.legacy-theme {
       background-color: #f5f5f5;
       color: #000;
     }
@@ -45,22 +43,45 @@
       background: #222;
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
     }
+    /* ---------- Header with Rainbow Switching Colors ---------- */
     h1 {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-size: 2.5em;
       margin-bottom: 20px;
-      background: linear-gradient(45deg, #FF8C00, #FF0000, #FFFF00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      position: relative;
+      text-align: center;
     }
-    body.pink-theme h1 {
-      background: linear-gradient(45deg, #e91e63, #ec407a, #f06292);
+    /* BlocksMC Tracker: gradient text with ultra switching colors */
+    .header-tracker {
+      background: linear-gradient(90deg, red, blue, red, blue, red);
+      background-size: 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      animation: rainbow 5s linear infinite;
+    }
+    /* Ban text: dark red */
+    .header-ban {
+      color: darkred;
+      font-size: 0.8em;
+      margin-top: -10px;
+    }
+    /* Version marker */
+    .header-version {
+      font-size: 0.6em;
+      color: white;
+      background: linear-gradient(90deg, red, blue, red, blue, red);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 5s linear infinite;
+      margin-top: 5px;
+    }
+    @keyframes rainbow {
+      0% { background-position: 0%; }
+      100% { background-position: 100%; }
     }
     h1 img {
       width: 128px;
@@ -86,28 +107,40 @@
       border: 1px solid #444;
       color: #fff;
     }
+    /* ---------- Ultra Lime Buttons (Modern Neon Style) ---------- */
     button {
-      background-color: #4CAF50;
+      background-color: #32CD32; /* Ultra Lime Green */
       color: white;
-      border: none;
-      padding: 10px 20px;
+      border: 2px solid #28A428; /* Slightly darker lime border */
+      padding: 12px 22px;
       font-size: 16px;
-      border-radius: 4px;
+      font-weight: bold;
+      font-family: "Poppins", Arial, sans-serif;
+      border-radius: 8px;
       cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      text-transform: uppercase;
+      box-shadow: 0px 0px 12px rgba(50, 205, 50, 0.7); /* Neon Glow Effect */
+    }
+    button:hover {
+      background-color: #28A428; /* Darker Lime */
+      box-shadow: 0px 0px 18px rgba(50, 205, 50, 0.9);
+      transform: scale(1.05);
     }
     button:disabled {
-      background-color: #999;
+      background-color: #888;
+      border: 2px solid #666;
+      box-shadow: none;
+      transform: none;
       cursor: not-allowed;
-    }
-    button:hover:not(:disabled) {
-      background-color: #45a049;
     }
     body.pink-theme button {
       background-color: #e91e63;
     }
-    body.pink-theme button:hover:not(:disabled) {
+    body.pink-theme button:hover {
       background-color: #ec407a;
     }
+    /* ---------- Ban Log Styles ---------- */
     .ban-log {
       margin-top: 20px;
       padding: 10px;
@@ -131,6 +164,7 @@
       margin-bottom: 5px;
       font-size: 14px;
     }
+    /* ---------- Last Check and Previous List ---------- */
     #lastCheckInfo {
       margin-bottom: 20px;
       padding: 10px;
@@ -149,6 +183,7 @@
       border: 1px solid #c5cae9;
       border-radius: 4px;
       padding: 10px;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
     }
     body.pink-theme #prevContainer {
       background: #2a2a2a;
@@ -207,7 +242,7 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background-color: #d9534f;
+      background-color: #ff1a1a; /* Ultra dark red similar to SelfKicker button */
       color: white;
       border: none;
       padding: 10px 15px;
@@ -217,8 +252,14 @@
       z-index: 1100;
     }
     .reset-cookies-btn:hover {
-      background-color: #c9302c;
+      background-color: #e60000;
     }
+    /* ---------- New Animation for Erasing Previous Usernames ---------- */
+    #prevContainer.removing {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    /* ---------- FAQ Section (Improved with Animated Accordion) ---------- */
     .faq-section {
       background: #111;
       color: #eee;
@@ -238,7 +279,9 @@
     }
     .faq-item {
       border-bottom: 1px solid #333;
-      padding: 10px 0;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      overflow: hidden;
     }
     .faq-item:last-child {
       border-bottom: none;
@@ -247,12 +290,50 @@
       cursor: pointer;
       font-size: 1.2em;
       outline: none;
+      padding: 10px;
+      background-color: #222;
+      color: #fff;
     }
-    .faq-item p {
-      margin-top: 10px;
-      padding-left: 20px;
+    .faq-item summary:hover {
+      background-color: #333;
+    }
+    /* Hide default marker */
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+    /* Custom arrow indicator */
+    .faq-item summary:before {
+      content: "❓";
+      display: inline-block;
+      margin-right: 10px;
+      transition: transform 0.3s ease;
+    }
+    details[open] .faq-item summary:before {
+      transform: rotate(90deg);
+    }
+    /* Animated content container */
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.5s ease;
+      padding: 0 10px;
+    }
+    details[open] .faq-content {
+      max-height: 500px;
+      opacity: 1;
+      padding: 10px;
+    }
+    .faq-content p {
+      margin: 0;
       line-height: 1.4;
     }
+    .faq-content iframe {
+      display: block;
+      margin-top: 10px;
+      max-width: 100%;
+    }
+    /* ---------- Theme Toggle Button ---------- */
     #themeToggle {
       position: absolute;
       top: 10px;
@@ -272,6 +353,7 @@
       background: rgba(233,30,99,0.8);
       color: #fff;
     }
+    /* ---------- Floating Hearts (for Pink Theme) ---------- */
     #heartsContainer {
       position: fixed;
       top: 0;
@@ -309,6 +391,46 @@
       h1 { font-size: 2em; }
       button { font-size: 14px; padding: 8px 15px; }
     }
+    /* ---------- SelfKicker Tool Section (Ultra Dark Red Design) ---------- */
+    .selfkick-section {
+      margin-top: 30px;
+      padding: 15px;
+      background: #1a0000;
+      border: 2px solid #660000;
+      border-radius: 6px;
+    }
+    .selfkick-section h2 {
+      font-size: 1.8em;
+      color: #ff4d4d;
+      margin-bottom: 10px;
+    }
+    .selfkick-section button {
+      background-color: #ff1a1a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .selfkick-section button:hover {
+      background-color: #e60000;
+    }
+    .selfkick-status {
+      font-size: 1.2em;
+      color: #ff9999;
+      margin-top: 10px;
+    }
+    .selfkick-log {
+      font-size: 1em;
+      max-height: 150px;
+      overflow: auto;
+      background: #333;
+      color: #fff;
+      padding: 5px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -326,21 +448,26 @@
   <!-- Warning Message -->
   <div id="warningMessage"></div>
   
-  <!-- Reset Cookies Button -->
-  <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
+  <!-- Reset Cookies Button (now a trash can) -->
+  <button id="resetCookiesBtn" class="reset-cookies-btn">🗑️Remove previous usernames list</button>
 
   <div class="container">
+    <!-- Header Section -->
     <h1>
-      <img src="TrackerIcon.png" alt="Icon">
-      BlocksMC Tracker Tool
+      <img src="TrackerIcon.png" alt="Icon" style="width:70px; vertical-align:middle; margin-right:5px;">
+      <span class="header-tracker">BlocksMC Tracker</span>
+      <span class="header-ban">Ban</span>
+      <span class="header-version">1.0.4</span>
     </h1>
+    
     
     <!-- Last Check Info -->
     <div id="lastCheckInfo" style="display:none;"></div>
     
+    <!-- Username Ban Checker -->
     <label for="username">Enter a username to check ban status:</label>
     <input type="text" id="username" placeholder="Enter username" maxlength="16">
-    <button id="checkBtn">Check</button>
+    <button id="checkBtn">Check account status</button>
 
     <div class="ban-log" id="banLog">
       <h2>Ban Log</h2>
@@ -352,61 +479,79 @@
       <h2>Previous Usernames</h2>
       <div id="prevList"></div>
     </div>
-    <!-- FAQ Section -->
+    
+    <!-- FAQ Section (Improved with Animated Accordion) -->
     <div class="faq-section">
       <h2>FAQ</h2>
       <details class="faq-item">
         <summary>What should I do if a player isn’t banned but I faked a clip of him?</summary>
-        <p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making sure the clip looks legitimate with a similar skin.</p>
+        <div class="faq-content">
+          <p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making sure the clip looks legitimate with a similar skin.</p>
+        </div>
       </details>
       <details class="faq-item">
         <summary>What should I do if I got banned for faking another player's clip, even though they weren't?</summary>
-        <p>You probably provided the wrong in-game name or clip. If you faked the clip—or perhaps tried to report a moderator (which doesn’t actually work because BlocksMC doesn’t care)—they will still ban you permanently. This happened on my main account.</p>
+        <div class="faq-content">
+          <p>You probably provided the wrong in-game name or clip. If you faked the clip—or perhaps tried to report a moderator—they will still ban you permanently. This happened on my main account.</p>
+        </div>
       </details>
       <details class="faq-item">
         <summary>Why can't we check a premium account status if it is banned?</summary>
-        <p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Because of authentication issues and the premium requirement, an account can log in and then be kicked. Instead, to determine if an account is banned, you can track playtime changes.</p>
+        <div class="faq-content">
+          <p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Instead, to determine if an account is banned, you can track playtime changes.</p>
+        </div>
       </details>
       <details class="faq-item">
         <summary>How to get someone banned?</summary>
-        <p>Ok, here's how to get someone banned: download a name spoofer mod and a skin spoofer mod—or use Vape V4. Then, on your main Minecraft instance (the one you'll be recording), download LiquidBounce (probably my best recommendation for faking clips) and install Baritone from its GitHub (https://github.com/cabaletta/baritone, make sure you download the latest version). For LiquidBounce, you might need an extra mod (like Kotlin) to make it work; enable it and then type <code>#follow player *YourMainInstanceIGN*</code>. Once LiquidBounce has Verus Combat Disabler (choose “VerusCombat Disabler” and do not enable “waitUntilCombat”) and Ping Spoofer enabled, if the target pathfinds then start recording a clip—aim for a clip of 15 seconds without knockback and with a bot hitting like a real player. Finally, upload your clip via blocksmc.com/report (you can host it on YouTube or Streamlabs). Note: This typically only works on default-ranked players. If the target is a moderator or has purchased a rank (or with tokens), staff might not ban them.</p>
+        <div class="faq-content">
+          <p>Download a name spoofer and skin spoofer mod—or use Vape V4. Record a clip with your bot instance and report via blocksmc.com/report. Note: This typically only works on default-ranked players.</p>
+        </div>
       </details>
       <details class="faq-item">
         <summary>How to use name spoofer in VAPE V4 against your second instance of bot?</summary>
-        <p>To do this, navigate to the Minecraft friends section (make sure Vape Friends is not enabled), then add your bot's username like: <code>nwath FakeUsername</code> so that it changes from “nwath” to “FakeUsername.” If it still doesn’t work, try enabling the spoofAlias in the settings icon. If you need more help, check this video: <iframe width="300" height="230" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
+        <div class="faq-content">
+          <p>Add your bot's username as a friend (e.g., "nwath FakeUsername") so that it changes. If it fails, try enabling spoofAlias in settings.</p>
+          <iframe width="254" height="268" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
       </details>
       <details class="faq-item">
-        <summary>Why this application has 2 themes? Pink and Legacy?</summary>
-        <p>Becuase we created Pink as a for girls design who is a gamer girl and legacy theme can be still used but very practile to have 2 themes atleast</p>
+        <summary>Why does this application have 2 themes? Pink and Legacy?</summary>
+        <div class="faq-content">
+          <p>We created Pink as a design for gamers and Legacy for a classic look—providing two options for different tastes.</p>
+        </div>
       </details>
       <details class="faq-item">
-        <summary>Why did you open this application if we can check through minecraft client whats a point?</summary>
-        <p>I thought it was funny to create this application, For first 1. Instant access no need to go to alt manager, To waste your time this eliminates in time waste 2. Advanced features of tracking, We will have features like name claimer that allows you to claim a IGN While this feature has been not released it works for specifally when a username gets changed in premium account and hasnt trasnfered their stats so you login with play.blocksmc.com and then a bot stays in account for 24/7, This might reqiure a key cookie and it will create a password of account that will be stored in our database and login and all details of this claimed username is stored, Do not change the password, Make sure the bot can connect if a player of account you logout then you risk of premium.blocksmc.com that main owner of account trasnfer stats and lock you, So you once done playing logout instantly to make sure bot can connect to account and then he logins with password and stays 24/7 even if your internet cuts so use our as a soloution</p>
+        <summary>Why did you build this application if we can check ban status through the Minecraft client?</summary>
+        <div class="faq-content">
+          <p>It provides instant access, advanced tracking, and features like a name claimer that runs 24/7. It eliminates the need for an alt manager and helps you monitor accounts continuously.</p>
+        </div>
       </details>
     </div>
-    <!-- Redirect Button to OG Username Tracker -->
-    <br>
-    <button id="redirectToOGBtn">Go to OG Username Tracker</button>
     
-    <!-- SelfKick Section -->
-    <div id="selfkickSection">
-      <h2 style="font-size: 20px;">
-        <img src="selfkicklogo.png" alt="SelfKick Logo" style="height:40px; width:auto; vertical-align:middle;">
+   <!-- Redirect Button to OG Username Tracker -->
+<br>
+<button id="redirectToOGBtn" style="width:100%; font-size:18px;">Go to Stealer Account Claimer ➡</button>
+    
+    <!-- SelfKicker Tool Section (Ultra Dark Red Design) -->
+    <div class="selfkick-section" id="selfkickSection">
+      <h2>
+        <img src="selfkicklogo.png" alt="SelfKick Logo" style="height:40px; width:auto; vertical-align:middle; margin-right:10px;">
         SelfKicker Tool
       </h2>
-      <div style="font-size: 20px;">
-        Buttons: [<button id="enableSelfKickBtn">Enable now</button>] [<button id="disableSelfKickBtn" disabled>Disable</button>]
+      <div>
+        <button id="enableSelfKickBtn">Enable now</button>
+        <button id="disableSelfKickBtn">Disable</button>
       </div>
-      <p id="selfKickStatusMsg" style="font-size: 20px;"></p>
-      <pre id="selfkickLog" style="font-size: 20px; max-height:150px; overflow:auto; background:#222; color:#fff; padding:5px;"></pre>
+      <p class="selfkick-status" id="selfKickStatusMsg"></p>
+      <pre class="selfkick-log" id="selfkickLog"></pre>
     </div>
     
   </div>
   
   <!-- Audio elements for sound effects -->
-  <audio id="buttonSound" src="buttonOnPressed.mp3" preload="auto"></audio>
-  <audio id="errorSound" src="Error.mp3" preload="auto"></audio>
-  <audio id="unbannedSound" src="StatusPlayerUnbanned.mp3" preload="auto"></audio>
+  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio>
+  <audio id="errorSound" src="Error.ogg" preload="auto"></audio>
+  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio>
   
   <script>
     /* ---------- Storage Utility Functions (using localStorage) ---------- */
@@ -549,11 +694,11 @@
         
         const countSpan = document.createElement("span");
         countSpan.className = "prevCount";
-        countSpan.textContent = "Recheck count: " + entry.count;
+        countSpan.textContent = " Rechecked status count: " + entry.count;
         
         const recheckButton = document.createElement("button");
         recheckButton.className = "recheckBtn";
-        recheckButton.textContent = "ReCheck";
+        recheckButton.textContent = "Recheck status";
         recheckButton.disabled = entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account");
         recheckButton.addEventListener("click", () => {
           usernameInput.value = user;
@@ -580,7 +725,7 @@
         lastCheckInfo.innerHTML = `
           <strong>Last Checked:</strong> ${lastUsername} <br>
           <strong>Status:</strong> ${displayStatus ? displayStatus : "Unknown"} 
-          <br><button id="recheckBtnLast">Re-check this username</button>
+          <br><button id="recheckBtnLast">Re-check this account status</button>
         `;
         document.getElementById("recheckBtnLast").addEventListener("click", () => {
           usernameInput.value = lastUsername;
@@ -616,14 +761,13 @@
       updatePrevList();
       
       checkBtn.disabled = true;
-      checkBtn.textContent = "Please wait 7 seconds...";
-      setTimeout(() => { checkBtn.textContent = "Please wait 6 seconds..."; }, 1000);
-      setTimeout(() => { checkBtn.textContent = "Please wait 4 seconds..."; }, 3000);
-      setTimeout(() => { checkBtn.textContent = "Please wait 2 seconds..."; }, 5000);
+      checkBtn.textContent = "Please wait 3 seconds...";
+      setTimeout(() => { checkBtn.textContent = "Please wait 2 seconds..."; }, 1000);
+      setTimeout(() => { checkBtn.textContent = "Please wait 1 second..."; }, 2000);
       setTimeout(() => {
         checkBtn.disabled = false;
         checkBtn.textContent = "Check";
-      }, 7000);
+      }, 3000);
       
       logList.innerHTML = "";
       window.electronAPI.sendCheckBan(username);
@@ -672,9 +816,22 @@
     
     document.getElementById('resetCookiesBtn').addEventListener('click', function() {
       if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
-        localStorage.removeItem("prevUsers");
-        updatePrevList();
-        alert("All list of previously usernames were reset.");
+        const prevContainer = document.getElementById("prevContainer");
+        if (prevContainer && prevContainer.style.display !== "none") {
+          // Trigger the slide-out animation
+          prevContainer.classList.add("removing");
+          setTimeout(() => {
+            localStorage.removeItem("prevUsers");
+            updatePrevList();
+            alert("All list of previously usernames were reset.");
+            // Optional: remove the class to allow re-animation later
+            prevContainer.classList.remove("removing");
+          }, 500);
+        } else {
+          localStorage.removeItem("prevUsers");
+          updatePrevList();
+          alert("All list of previously usernames were reset.");
+        }
       }
     });
     
@@ -682,7 +839,7 @@
       window.location.href = "indexog.html";
     });
     
-    // ----- SelfKick Functionality -----
+    // ----- SelfKick Functionality (Buttons Always Clickable) -----
     const enableSelfKickBtn = document.getElementById("enableSelfKickBtn");
     const disableSelfKickBtn = document.getElementById("disableSelfKickBtn");
     const selfKickStatusMsg = document.getElementById("selfKickStatusMsg");
@@ -698,13 +855,9 @@
     window.electronAPI.onSelfKickStatus((status) => {
       console.log("SelfKick status:", status);
       if (status === "started") {
-         selfKickStatusMsg.textContent = "Successfully started selfkick. NOTE: This works only if somebody is in your home and you want to do this then and by using 4 accounts of bots to kick everyone from your IP. This is fun to do but he might get mad.";
-         enableSelfKickBtn.disabled = true;
-         disableSelfKickBtn.disabled = false;
+         selfKickStatusMsg.textContent = "Selfkick started.";
       } else if (status === "stopped") {
          selfKickStatusMsg.textContent = "Selfkick stopped.";
-         enableSelfKickBtn.disabled = false;
-         disableSelfKickBtn.disabled = true;
       }
     });
     

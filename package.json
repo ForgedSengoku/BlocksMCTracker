@@ -1,6 +1,6 @@
 {
   "name": "blocksmctracker",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [],
-  "author": "",
+  "author": "ForgedSengoku",
   "license": "ISC",
   "dependencies": {
     "electron-updater": "^6.3.9",
@@ -26,6 +26,7 @@
   "build": {
     "appId": "com.blocksmctracker.app",
     "productName": "BlocksMC Tracker",
+    "artifactName": "BlocksMC-Tracker-Setup-${version}.${ext}",
     "files": [
       "main.js",
       "bot.js",
@@ -38,6 +39,11 @@
     "win": {
       "target": "nsis",
       "icon": "public/icon.ico"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "ForgedSengoku",
+      "repo": "BlocksMCTracker"
     }
   },
   "description": "Tracker APP"

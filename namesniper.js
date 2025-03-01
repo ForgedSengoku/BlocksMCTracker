@@ -10,6 +10,7 @@ let monitoring = false;
 let userStopped = false; // Flag to track if the user manually stopped the bot
 let currentTargetUuid = null; // Currently tracked account's UUID
 
+// Helper: Generate a random password (unused when a stored password is missing)
 function generateRandomPassword(length = 10) {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let password = '';
@@ -32,7 +33,7 @@ function getNameForUuid(uuid) {
   });
 }
 
-// Use a fixed directory and file "oguserstore.txt" in C:\BlocksMC_TrackerData
+// Returns the path to oguserstore.txt in C:\BlocksMC_TrackerData
 function getStoreFilePath() {
   const dataDir = 'C:\\BlocksMC_TrackerData';
   if (!fs.existsSync(dataDir)) {
@@ -45,6 +46,7 @@ function getStoreFilePath() {
   return filePath;
 }
 
+// Reads and parses the store file.
 function readUserOGStore() {
   const filePath = getStoreFilePath();
   try {
@@ -56,8 +58,7 @@ function readUserOGStore() {
   }
 }
 
-// Update or create the store entry for the given targetUuid.
-// The entry now includes Username, Password, and status.
+// Updates or creates the store entry for a targetUuid with Username, Password, and status.
 function updateUserOGStore(targetUuid, username, password, status) {
   const filePath = getStoreFilePath();
   const store = readUserOGStore();
@@ -69,6 +70,7 @@ function updateUserOGStore(targetUuid, username, password, status) {
   }
 }
 
+// Retrieves stored data for a targetUuid.
 function getStoredData(targetUuid) {
   const store = readUserOGStore();
   return store[targetUuid] || null;
@@ -91,8 +93,9 @@ function startAntiAFK(bot) {
   cycle();
 }
 
-// Launch the bot to claim the new username.
-// If a stored password exists, use /login; otherwise, use /register.
+// Launches the bot to claim the new username.
+// Uses the stored password (if present) to log in.
+// If no stored password is found, returns an error via the callback.
 function launchClaimerBot(targetUuid, newUsername, callback) {
   const stored = getStoredData(targetUuid);
   let password, command;
@@ -100,8 +103,8 @@ function launchClaimerBot(targetUuid, newUsername, callback) {
     password = stored.Password;
     command = `/login ${password}`;
   } else {
-    password = generateRandomPassword(10);
-    command = `/register ${password} ${password}`;
+    callback({ type: 'error', message: 'No stored password found for this account. Please update oguserstore.txt with a valid password.' });
+    return;
   }
 
   sniperBot = mineflayer.createBot({
@@ -137,20 +140,22 @@ function launchClaimerBot(targetUuid, newUsername, callback) {
   sniperBot.on('error', (err) => {
     console.error('Bot error:', err);
     if (!userStopped) {
-      callback({ type: 'error', message: 'Not claimed failed to claim. Try again later' });
+      callback({ type: 'error', message: 'Failed to claim. Try again later.' });
     }
   });
 }
 
-// Start tracking the provided targetUuid.
+// Starts tracking the provided targetUuid.
+// If a bot is already running, it returns an info callback.
+// If no stored password exists, returns an error.
 function startSniper(targetUuid, callback) {
-  // Validate targetUuid (standard UUID format)
+  // Validate targetUuid (must be in standard UUID format)
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetUuid)) {
-    callback({ type: 'error', message: 'This uuid is invaild and complety useless provide a vaild uuid please.' });
+    callback({ type: 'error', message: 'Invalid UUID. Please provide a valid UUID.' });
     return;
   }
   if (monitoring) {
-    callback({ type: 'error', message: 'Name Claimer Bot is already running.' });
+    callback({ type: 'info', message: 'Bot is already tracking this UUID.' });
     return;
   }
   monitoring = true;
@@ -161,15 +166,17 @@ function startSniper(targetUuid, callback) {
   if (stored && stored.Username) {
     lastUsername = stored.Username;
     callback({ type: 'info', message: 'Monitoring started. Currently checking account: ' + lastUsername });
-    // Ensure store reflects "Currently checking" status.
-    updateUserOGStore(targetUuid, lastUsername, stored.Password || generateRandomPassword(10), "Currently checking");
+    if (!stored.Password) {
+      callback({ type: 'error', message: 'No stored password found for this account. Please update oguserstore.txt with a valid password.' });
+      return;
+    }
+    updateUserOGStore(targetUuid, lastUsername, stored.Password, "Currently checking");
   } else {
     getNameForUuid(targetUuid)
       .then(username => {
         lastUsername = username;
-        const password = generateRandomPassword(10);
-        updateUserOGStore(targetUuid, username, password, "Currently checking");
-        callback({ type: 'info', message: 'Monitoring started. Currently checking account: ' + username });
+        callback({ type: 'error', message: 'No stored password found for UUID ' + targetUuid + '. Please update oguserstore.txt with a valid password.' });
+        return;
       })
       .catch(err => {
         callback({ type: 'error', message: 'Error retrieving username for UUID: ' + err });
@@ -195,6 +202,7 @@ function startSniper(targetUuid, callback) {
   }, 15000);
 }
 
+// Stops the tracking bot and marks the target as stopped.
 function stopSniper(callback) {
   userStopped = true;
   if (sniperInterval) {
@@ -206,7 +214,6 @@ function stopSniper(callback) {
     sniperBot.quit();
     sniperBot = null;
   }
-  // Mark the current target as stopped in the store.
   if (currentTargetUuid) {
     const stored = getStoredData(currentTargetUuid);
     if (stored) {

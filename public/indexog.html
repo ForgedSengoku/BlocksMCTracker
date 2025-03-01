@@ -85,39 +85,38 @@
       border: 1px solid #444;
       color: #fff;
     }
+    /* ---------- Ultra Lime Buttons ---------- */
     button {
-      background-color: #4CAF50;
+      background-color: #32CD32; /* Ultra Lime Green */
       color: white;
-      border: none;
-      padding: 10px 20px;
+      border: 2px solid #28A428; /* Slightly darker lime border */
+      padding: 12px 22px;
       font-size: 16px;
-      border-radius: 4px;
+      font-weight: bold;
+      font-family: "Poppins", Arial, sans-serif;
+      border-radius: 6px;
       cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      text-transform: uppercase;
+      box-shadow: 0px 0px 8px rgba(50, 205, 50, 0.6); /* Neon Glow Effect */
+    }
+    button:hover {
+      background-color: #28A428; /* Darker Lime */
+      box-shadow: 0px 0px 15px rgba(50, 205, 50, 0.8);
+      transform: scale(1.05);
     }
     button:disabled {
-      background-color: #999;
+      background-color: #888;
+      border: 2px solid #666;
+      box-shadow: none;
+      transform: none;
       cursor: not-allowed;
     }
-    button:hover:not(:disabled) {
-      background-color: #45a049;
-    }
     body.pink-theme button {
-      background-color: #e91e63;
+      background-color: #e91e63; /* Keep pink theme button */
     }
-    body.pink-theme button:hover:not(:disabled) {
+    body.pink-theme button:hover {
       background-color: #ec407a;
-    }
-    .claimed-log {
-      margin-top: 20px;
-      padding: 10px;
-      background: #e0f7fa;
-      border-radius: 4px;
-      border: 1px solid #4dd0e1;
-    }
-    body.pink-theme .claimed-log {
-      background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
     }
     /* ---------- OG Account Entry Animation ---------- */
     @keyframes dropRotate {
@@ -178,36 +177,61 @@
       h1 { font-size: 2em; }
       button { font-size: 14px; padding: 8px 15px; }
     }
+    
+    /* ---------- Custom Note Style ---------- */
+    .custom-note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px;
+      display: block;
+      padding: 15px 25px;
+      background-color: #32CD32;
+      border: 3px solid #28A428;
+      border-radius: 8px;
+      box-shadow: 0px 0px 12px rgba(50,205,50,0.8);
+      color: #fff;
+      font-family: "Poppins", Arial, sans-serif;
+    }
+    .note-label {
+      color: red;
+      font-weight: bold;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
   <!-- Audio elements -->
   <!-- This sound plays when monitoring starts -->
-  <audio id="ogTrackStartSound" src="ogTrackStart.mp3" preload="auto"></audio>
+  <audio id="ogTrackStartSound" src="ogTrackStart.ogg" preload="auto"></audio>
   <!-- Existing sound elements -->
-  <audio id="claimSound" src="accountclaimed.mp3" preload="auto"></audio>
-  <audio id="errorSound" src="Error.mp3" preload="auto"></audio>
+  <audio id="claimSound" src="accountclaimed.ogg" preload="auto"></audio>
+  <audio id="errorSound" src="Error.ogg" preload="auto"></audio>
   
   <div id="themeToggle">Theme: Legacy</div>
   <div class="container">
     <h1>
-      <img src="TrackerIcon.png" alt="Icon">
-      OG Username Tracker
-    </h1>
-    <label for="targetUuid">Enter Target Player UUID:</label>
+      <img src="TrackerIcon.png" alt="Icon" style="width:70px; vertical-align:middle; margin-right:5px;">
+      Stealer Account Claimer 
+    </h1>    
+    <label for="targetUuid">Enter Target Player UUID To Steal Account:</label>
     <input type="text" id="targetUuid" placeholder="Enter target UUID">
     <button id="startNamesniperBtn">Start Name Claimer Bot</button>
     <button id="stopNamesniperBtn" style="margin-left:10px;">Stop Bot</button>
     <div id="namesniperStatus" style="margin-top:10px;"></div>
     <div id="claimedAccounts" class="claimed-log" style="margin-top:20px;">
-      <h3>OG Claimed Accounts:</h3>
+      <h3>Stole Claimed Accounts:</h3>
       <div id="claimedAccountsList"></div>
     </div>
     <br>
-    <button id="redirectBackBtn">Back to Tracker Tool</button>
+    <button id="redirectBackBtn" style="width:100%; font-size:18px;">⬅ Go Back to Ban Tracker Tool</button>
+    
+    <!-- Custom Note placed below the Back to Tracker Tool button -->
+    <div class="custom-note">
+      <span class="note-label">WARNING!:</span>I will not be responsbile for whatever action like stealing account, This was indeed for stealing accounts becuase,
+      It needed to steal players accounts and by bypassing blocksmc restrictions of premium account and by claiming it, I don't care its my project
+    </div>
   </div>
   
-  <!-- Removed Socket.IO Client Library -->
   <script>
     // Cookie utility functions
     function setCookie(name, value, days) {
@@ -314,9 +338,11 @@
       renderOGList(storedOG);
     }
     
+    // Start the namesniper bot
     startNamesniperBtn.addEventListener("click", () => {
       const targetUuid = document.getElementById("targetUuid").value.trim();
       if(!targetUuid){
+        document.getElementById("errorSound").play();
         alert("Please enter a target player UUID.");
         return;
       }
@@ -372,6 +398,9 @@
     redirectBackBtn.addEventListener("click", () => {
       window.location.href = "index.html";
     });
+
+    // On load, request the current OG usernames so that the UI always shows updated data.
+    window.electronAPI.sendGetOGUsernames();
   </script>
 </body>
 </html>

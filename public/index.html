@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BlocksMC Ban Tracker V3</title>
+  <title>BlocksMC Ban Tracker Website</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* ---------- Base Styles (Legacy Default) ---------- */
@@ -342,6 +342,11 @@
   Warning: This website is discontinued and won't get any updates! To get updates download our app from <a href="https://github.com/ForgedSengoku/BlocksMCTracker/releases" style="color: red; text-decoration: underline;">https://github.com/ForgedSengoku/BlocksMCTracker/releases</a><br>
   In our electron app we have sounds and more features like OG Username Tracker, but the website is limited to ban tracker only!
 </div>
+  <!-- Audio elements for sound effects -->
+  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio>
+  <audio id="errorSound" src="Error.ogg" preload="auto"></audio>
+  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio>
+
   <!-- Warning Message -->
   <div id="warningMessage"></div>
   
@@ -613,10 +618,14 @@
     updateLastCheckInfo();
     updatePrevList();
     
-    checkBtn.addEventListener('click', () => {
+   checkBtn.addEventListener('click', () => {
+      document.getElementById('buttonSound').play().catch(console.error);
+      
       const username = usernameInput.value.trim();
-      if (username === "ForgedSengoku") {
-        banUser();
+      const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+      if (!validUsernameRegex.test(username)) {
+        document.getElementById('errorSound').play().catch(console.error);
+        alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
         return;
       }
       const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
@@ -665,7 +674,7 @@
       logList.appendChild(li);
       setCookie("lastBanStatus", message, 7);
       updateLastCheckInfo();
-      const prevUsers = getPrevUsers();
+    const prevUsers = getPrevUsers();
       let status = "";
       if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
         status = "Premium Account - Unable To Check. NOTE: You won't be able to check premium accounts due to BlocksMC restrictions.";
@@ -679,6 +688,11 @@
       }
       setPrevUsers(prevUsers);
       updatePrevList();
+    });
+   
+      if (status === "Not banned" || status === "Unbanned but player is playing right now") {
+        document.getElementById('unbannedSound').play().catch(console.error);
+      }
     });
     socket.on('kickLog', (message) => {
       const li = document.createElement('li');

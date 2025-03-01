@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- L1 -->
   <meta charset="UTF-8">
+  <!-- L2 -->
   <title>BlocksMC Ban Tracker Website</title>
+  <!-- L3 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- L4 -->
   <style>
-    /* ---------- Base Styles (Legacy Default) ---------- */
+    /* ---------- Base Styles (Legacy Default) ---------- */ /* L5 */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -327,59 +331,59 @@
   </style>
 </head>
 <body>
-  <!-- Theme Toggle Button (Top Left) -->
+  <!-- Theme Toggle Button (Top Left) --> <!-- L100 -->
   <div id="themeToggle">Theme: Legacy</div>
   
-  <!-- Floating Hearts (Pink Theme Only) -->
+  <!-- Floating Hearts (Pink Theme Only) --> <!-- L102 -->
   <div id="heartsContainer">
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
   </div>
- <!-- Note at the website discontiued -->
- <div class="download-note">
-  Warning: This website is discontinued and won't get any updates! To get updates download our app from <a href="https://github.com/ForgedSengoku/BlocksMCTracker/releases" style="color: red; text-decoration: underline;">https://github.com/ForgedSengoku/BlocksMCTracker/releases</a><br>
-  In our electron app we have sounds and more features like OG Username Tracker, but the website is limited to ban tracker only!
-</div>
-  <!-- Audio elements for sound effects -->
-  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio>
-  <audio id="errorSound" src="Error.ogg" preload="auto"></audio>
-  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio>
+  
+  <!-- Note at the website discontinued --> <!-- L109 -->
+  <div class="download-note">
+    Warning: This website is discontinued and won't get any updates! To get updates download our app from <a href="https://github.com/ForgedSengoku/BlocksMCTracker/releases" style="color: red; text-decoration: underline;">https://github.com/ForgedSengoku/BlocksMCTracker/releases</a><br>
+    In our electron app we have sounds and more features like OG Username Tracker, but the website is limited to ban tracker only!
+  </div>
+  
+  <!-- Audio elements for sound effects --> <!-- L116 -->
+  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio> <!-- L117 -->
+  <audio id="errorSound" src="Error.ogg" preload="auto"></audio> <!-- L118 -->
+  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio> <!-- L119 -->
 
-  <!-- Warning Message -->
+  <!-- Warning Message --> <!-- L121 -->
   <div id="warningMessage"></div>
   
-  <!-- Reset Cookies Button -->
+  <!-- Reset Cookies Button --> <!-- L123 -->
   <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
 
-  <div class="container">
+  <div class="container"> <!-- L126 -->
     <h1>
       <img src="TrackerIcon.png" alt="Icon">
       BlocksMC Tracker Tool
     </h1>
     
-  
-    
-    <!-- Last Check Info -->
+    <!-- Last Check Info --> <!-- L131 -->
     <div id="lastCheckInfo" style="display:none;"></div>
     
-    <label for="username">Enter a username to check ban status:</label>
-    <input type="text" id="username" placeholder="Enter username" maxlength="16">
-    <button id="checkBtn">Check</button>
+    <label for="username">Enter a username to check ban status:</label> <!-- L134 -->
+    <input type="text" id="username" placeholder="Enter username" maxlength="16"> <!-- L135 -->
+    <button id="checkBtn">Check</button> <!-- L136 -->
 
-    <div class="ban-log" id="banLog">
+    <div class="ban-log" id="banLog"> <!-- L138 -->
       <h2>Ban Log</h2>
       <ul id="logList"></ul>
     </div>
     
-    <!-- Previous Usernames Section -->
+    <!-- Previous Usernames Section --> <!-- L143 -->
     <div id="prevContainer" style="display:none;">
       <h2>Previous Usernames</h2>
       <div id="prevList"></div>
     </div>
     
-    <!-- FAQ Section (All FAQs restored) -->
+    <!-- FAQ Section (All FAQs restored) --> <!-- L148 -->
     <div class="faq-section">
       <h2>FAQ</h2>
       <details class="faq-item">
@@ -419,11 +423,11 @@
     
   </div>
 
-  <!-- Socket.IO Client Library -->
+  <!-- Socket.IO Client Library --> <!-- L210 -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    /* ---------- Cookie Utility Functions ---------- */
-    function setCookie(name, value, days) {
+    // ---------- Cookie Utility Functions ---------- // L212
+    function setCookie(name, value, days) { // L213
       var expires = "";
       if (days) {
         var date = new Date();
@@ -432,7 +436,7 @@
       }
       document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
-    function getCookie(name) {
+    function getCookie(name) { // L221
       var nameEQ = name + "=";
       var ca = document.cookie.split(';');
       for (var i = 0; i < ca.length; i++) {
@@ -443,8 +447,8 @@
       return null;
     }
     
-    /* ---------- Theme Toggle Functions ---------- */
-    function updateTheme() {
+    // ---------- Theme Toggle Functions ---------- // L230
+    function updateTheme() { // L231
       var pink = getCookie("pinkdesign");
       if (pink === "true") {
         document.body.classList.remove("legacy-theme");
@@ -456,7 +460,7 @@
         document.getElementById("themeToggle").textContent = "Theme: Legacy";
       }
     }
-    function toggleTheme() {
+    function toggleTheme() { // L242
       var pink = getCookie("pinkdesign");
       if (pink === "true") {
         setCookie("pinkdesign", "false", 7);
@@ -471,7 +475,7 @@
     document.getElementById("themeToggle").addEventListener("click", toggleTheme);
     
     
-    const colorMap = {
+    const colorMap = { // L251
       black: '#000000',
       dark_blue: '#0000AA',
       dark_green: '#00AA00',
@@ -492,7 +496,7 @@
       white: '#FFFFFF'
     };
     
-    function parseMinecraftMessage(jsonString) {
+    function parseMinecraftMessage(jsonString) { // L266
       try {
         const data = JSON.parse(jsonString);
         if (!data.extra || !Array.isArray(data.extra)) return jsonString;
@@ -509,7 +513,7 @@
         return jsonString;
       }
     }
-    function renderMessage(message) {
+    function renderMessage(message) { // L280
       const prefix = "Kicked: ";
       if (message.startsWith(prefix)) {
         const jsonPart = message.substring(prefix.length);
@@ -518,7 +522,7 @@
       return parseMinecraftMessage(message);
     }
     
-    const socket = io();
+    const socket = io(); // L288
     const checkBtn = document.getElementById('checkBtn');
     const usernameInput = document.getElementById('username');
     const logList = document.getElementById('logList');
@@ -527,18 +531,18 @@
     const prevContainer = document.getElementById('prevContainer');
     let currentUsername = "";
     
-    usernameInput.addEventListener('keydown', (e) => {
+    usernameInput.addEventListener('keydown', (e) => { // L297
       if (e.key === ' ') e.preventDefault();
     });
     
-    function getPrevUsers() {
+    function getPrevUsers() { // L301
       const data = getCookie("prevUsers");
       return data ? JSON.parse(data) : {};
     }
-    function setPrevUsers(obj) {
+    function setPrevUsers(obj) { // L305
       setCookie("prevUsers", JSON.stringify(obj), 7);
     }
-    function updatePrevList() {
+    function updatePrevList() { // L309
       const prevUsers = getPrevUsers();
       prevContainer.style.display = Object.keys(prevUsers).length > 0 ? "block" : "none";
       prevList.innerHTML = "";
@@ -595,7 +599,7 @@
       }
     }
     
-    function updateLastCheckInfo() {
+    function updateLastCheckInfo() { // L357
       const lastUsername = getCookie("lastUsername");
       const lastBanStatus = getCookie("lastBanStatus");
       let displayStatus = lastBanStatus;
@@ -615,24 +619,22 @@
         });
       }
     }
-    updateLastCheckInfo();
-    updatePrevList();
+    updateLastCheckInfo(); // L371
+    updatePrevList(); // L372
     
-   checkBtn.addEventListener('click', () => {
+    checkBtn.addEventListener('click', () => { // L374
+      // Play button sound
       document.getElementById('buttonSound').play().catch(console.error);
       
       const username = usernameInput.value.trim();
-      const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+      const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/; // L378
       if (!validUsernameRegex.test(username)) {
-        document.getElementById('errorSound').play().catch(console.error);
+        document.getElementById('errorSound').play().catch(console.error); // L380
         alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
         return;
       }
-      const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-      if (!validUsernameRegex.test(username)) {
-        alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
-        return;
-      }
+      // Removed duplicate regex check
+      
       currentUsername = username;
       setCookie("lastUsername", username, 7);
       
@@ -660,7 +662,7 @@
       socket.emit('checkBan', username);
     });
     
-    socket.on('banResult', (message) => {
+    socket.on('banResult', (message) => { // L409
       if (message.includes("Error: read ECONNRESET")) {
         document.getElementById("warningMessage").style.display = "block";
         document.getElementById("warningMessage").textContent = "WARNING: Maybe my internet is lagging? OR server is down?";
@@ -674,7 +676,7 @@
       logList.appendChild(li);
       setCookie("lastBanStatus", message, 7);
       updateLastCheckInfo();
-    const prevUsers = getPrevUsers();
+      const prevUsers = getPrevUsers();
       let status = "";
       if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
         status = "Premium Account - Unable To Check. NOTE: You won't be able to check premium accounts due to BlocksMC restrictions.";
@@ -688,19 +690,19 @@
       }
       setPrevUsers(prevUsers);
       updatePrevList();
-    });
-   
+      
       if (status === "Not banned" || status === "Unbanned but player is playing right now") {
         document.getElementById('unbannedSound').play().catch(console.error);
       }
     });
-    socket.on('kickLog', (message) => {
+   
+    socket.on('kickLog', (message) => { // L435
       const li = document.createElement('li');
       li.innerHTML = renderMessage(message);
       logList.appendChild(li);
     });
     
-    document.getElementById('resetCookiesBtn').addEventListener('click', function() {
+    document.getElementById('resetCookiesBtn').addEventListener('click', function() { // L441
       if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
         setCookie("prevUsers", "", -1);
         updatePrevList();
@@ -708,7 +710,7 @@
       }
     });
     
-    // Removed OG Username Tracker redirection button listener
+    // Removed OG Username Tracker redirection button listener // L447
   </script>
 </body>
 </html>

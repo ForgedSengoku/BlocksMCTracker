@@ -1,871 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Override native dialogs to use Electron's custom dialogs -->
-  <script>
-    if (window.electronAPI) {
-      window.alert = function(message) {
-        return window.electronAPI.alert(message);
-      };
-      window.confirm = function(message) {
-        return window.electronAPI.confirm(message);
-      };
-    }
-  </script>
-  
-  <style>
-    /* ---------- Base Styles ---------- */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      overflow-x: hidden;
-      background-color: #f5f5f5;
-      color: #000;
-    }
-    body.pink-theme {
-      background-color: #000;
-      color: #fff;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 1;
-    }
-    body.pink-theme .container {
-      background: #222;
-      box-shadow: 0 0 15px rgba(0,0,0,0.7);
-    }
-    /* ---------- Header with Rainbow Switching Colors ---------- */
-    h1 {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      position: relative;
-      text-align: center;
-    }
-    /* BlocksMC Tracker: gradient text with ultra switching colors */
-    .header-tracker {
-      background: linear-gradient(90deg, red, blue, red, blue, red);
-      background-size: 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: rainbow 5s linear infinite;
-    }
-    /* Ban text: dark red */
-    .header-ban {
-      color: darkred;
-      font-size: 0.8em;
-      margin-top: -10px;
-    }
-    /* Version marker */
-    .header-version {
-      font-size: 0.6em;
-      color: white;
-      background: linear-gradient(90deg, red, blue, red, blue, red);
-      background-size: 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: rainbow 5s linear infinite;
-      margin-top: 5px;
-    }
-    @keyframes rainbow {
-      0% { background-position: 0%; }
-      100% { background-position: 100%; }
-    }
-    h1 img {
-      width: 128px;
-      height: auto;
-      margin-right: 10px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 10px;
-      background: #fff;
-      border: 1px solid #ddd;
-      color: #000;
-      border-radius: 4px;
-    }
-    body.pink-theme input[type="text"] {
-      background: #333;
-      border: 1px solid #444;
-      color: #fff;
-    }
-    /* ---------- Ultra Lime Buttons (Modern Neon Style) ---------- */
-    button {
-      background-color: #32CD32; /* Ultra Lime Green */
-      color: white;
-      border: 2px solid #28A428; /* Slightly darker lime border */
-      padding: 12px 22px;
-      font-size: 16px;
-      font-weight: bold;
-      font-family: "Poppins", Arial, sans-serif;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-      text-transform: uppercase;
-      box-shadow: 0px 0px 12px rgba(50, 205, 50, 0.7); /* Neon Glow Effect */
-    }
-    button:hover {
-      background-color: #28A428; /* Darker Lime */
-      box-shadow: 0px 0px 18px rgba(50, 205, 50, 0.9);
-      transform: scale(1.05);
-    }
-    button:disabled {
-      background-color: #888;
-      border: 2px solid #666;
-      box-shadow: none;
-      transform: none;
-      cursor: not-allowed;
-    }
-    body.pink-theme button {
-      background-color: #e91e63;
-    }
-    body.pink-theme button:hover {
-      background-color: #ec407a;
-    }
-    /* ---------- Ban Log Styles ---------- */
-    .ban-log {
-      margin-top: 20px;
-      padding: 10px;
-      background: #fff3cd;
-      border-radius: 4px;
-      border: 1px solid #ffeeba;
-    }
-    body.pink-theme .ban-log {
-      background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
-    }
-    .ban-log h2 {
-      margin-top: 0;
-    }
-    .ban-log ul {
-      list-style: none;
-      padding-left: 0;
-    }
-    .ban-log li {
-      margin-bottom: 5px;
-      font-size: 14px;
-    }
-    /* ---------- Last Check and Previous List ---------- */
-    #lastCheckInfo {
-      margin-bottom: 20px;
-      padding: 10px;
-      background: #e0f7fa;
-      border: 1px solid #4dd0e1;
-      border-radius: 4px;
-    }
-    body.pink-theme #lastCheckInfo {
-      background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
-    }
-    #prevContainer {
-      margin-top: 20px;
-      background: #e8eaf6;
-      border: 1px solid #c5cae9;
-      border-radius: 4px;
-      padding: 10px;
-      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-    }
-    body.pink-theme #prevContainer {
-      background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
-    }
-    #prevContainer h2 {
-      margin: 0 0 10px 0;
-      font-size: 1.5em;
-      text-align: center;
-    }
-    .prevEntry {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #ddd;
-      padding: 8px 0;
-    }
-    body.pink-theme .prevEntry {
-      border-bottom: 1px solid #ec407a;
-    }
-    .prevEntry:last-child {
-      border-bottom: none;
-    }
-    .prevUsername {
-      font-weight: bold;
-    }
-    .prevStatus {
-      padding: 4px 8px;
-      border-radius: 4px;
-      color: white;
-      margin-right: 10px;
-    }
-    .statusNotBanned { background: green; }
-    .statusBanned { background: red; }
-    .statusChecking { background: orange; }
-    .statusLoggedIn { background: yellow; color: black; }
-    .prevCount {
-      font-size: 0.9em;
-      color: #555;
-      margin-right: 10px;
-    }
-    .recheckBtn {
-      background-color: #4CAF50;
-      border: none;
-      padding: 5px 10px;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .recheckBtn:disabled {
-      background-color: #999;
-      cursor: not-allowed;
-    }
-    .reset-cookies-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #ff1a1a; /* Ultra dark red similar to SelfKicker button */
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      font-size: 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 1100;
-    }
-    .reset-cookies-btn:hover {
-      background-color: #e60000;
-    }
-    /* ---------- New Animation for Erasing Previous Usernames ---------- */
-    #prevContainer.removing {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    /* ---------- FAQ Section (Improved with Animated Accordion) ---------- */
-    .faq-section {
-      background: #111;
-      color: #eee;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-    body.legacy-theme .faq-section {
-      color: #eee;
-    }
-    body.pink-theme .faq-section {
-      color: #ff80ab;
-    }
-    .faq-section h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .faq-item {
-      border-bottom: 1px solid #333;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .faq-item:last-child {
-      border-bottom: none;
-    }
-    .faq-item summary {
-      cursor: pointer;
-      font-size: 1.2em;
-      outline: none;
-      padding: 10px;
-      background-color: #222;
-      color: #fff;
-    }
-    .faq-item summary:hover {
-      background-color: #333;
-    }
-    /* Hide default marker */
-    .faq-item summary::-webkit-details-marker {
-      display: none;
-    }
-    /* Custom arrow indicator */
-    .faq-item summary:before {
-      content: "❓";
-      display: inline-block;
-      margin-right: 10px;
-      transition: transform 0.3s ease;
-    }
-    details[open] .faq-item summary:before {
-      transform: rotate(90deg);
-    }
-    /* Animated content container */
-    .faq-content {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.5s ease, opacity 0.5s ease;
-      padding: 0 10px;
-    }
-    details[open] .faq-content {
-      max-height: 500px;
-      opacity: 1;
-      padding: 10px;
-    }
-    .faq-content p {
-      margin: 0;
-      line-height: 1.4;
-    }
-    .faq-content iframe {
-      display: block;
-      margin-top: 10px;
-      max-width: 100%;
-    }
-    /* ---------- Theme Toggle Button ---------- */
-    #themeToggle {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      padding: 8px 12px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 2000;
-    }
-    body.legacy-theme #themeToggle {
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-    }
-    body.pink-theme #themeToggle {
-      background: rgba(233,30,99,0.8);
-      color: #fff;
-    }
-    /* ---------- Floating Hearts (for Pink Theme) ---------- */
-    #heartsContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      pointer-events: none;
-      z-index: 100;
-    }
-    body.legacy-theme #heartsContainer {
-      display: none;
-    }
-    body.pink-theme #heartsContainer {
-      display: block;
-    }
-    .heart {
-      position: absolute;
-      width: 50px;
-      height: auto;
-      opacity: 0.8;
-      filter: drop-shadow(0 0 5px #ff80ab);
-      animation: glowFall 8s ease-in-out infinite;
-    }
-    @keyframes glowFall {
-      0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
-      20% { opacity: 1; }
-      50% { transform: translateY(200px) scale(1); opacity: 0.8; }
-      100% { transform: translateY(400px) scale(0.8); opacity: 0; }
-    }
-    .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .heart:nth-child(2) { left: 40%; animation-delay: 2s; }
-    .heart:nth-child(3) { left: 70%; animation-delay: 4s; }
-    .heart:nth-child(4) { left: 85%; animation-delay: 6s; }
-    @media (max-width: 600px) {
-      .container { padding: 15px; }
-      h1 { font-size: 2em; }
-      button { font-size: 14px; padding: 8px 15px; }
-    }
-    /* ---------- SelfKicker Tool Section (Ultra Dark Red Design) ---------- */
-    .selfkick-section {
-      margin-top: 30px;
-      padding: 15px;
-      background: #1a0000;
-      border: 2px solid #660000;
-      border-radius: 6px;
-    }
-    .selfkick-section h2 {
-      font-size: 1.8em;
-      color: #ff4d4d;
-      margin-bottom: 10px;
-    }
-    .selfkick-section button {
-      background-color: #ff1a1a;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    .selfkick-section button:hover {
-      background-color: #e60000;
-    }
-    .selfkick-status {
-      font-size: 1.2em;
-      color: #ff9999;
-      margin-top: 10px;
-    }
-    .selfkick-log {
-      font-size: 1em;
-      max-height: 150px;
-      overflow: auto;
-      background: #333;
-      color: #fff;
-      padding: 5px;
-      margin-top: 10px;
-    }
-  </style>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<script>window.electronAPI&&(window.alert=function(n){return window.electronAPI.alert(n)},window.confirm=function(n){return window.electronAPI.confirm(n)})</script>
+<style>body{font-family:Arial,sans-serif;margin:0;padding:20px;overflow-x:hidden;background-color:#f5f5f5;color:#000}body.pink-theme{background-color:#000;color:#fff}.container{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.1);position:relative;z-index:1}body.pink-theme .container{background:#222;box-shadow:0 0 15px rgba(0,0,0,.7)}h1{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:2.5em;margin-bottom:20px;position:relative;text-align:center}.header-tracker{background:linear-gradient(90deg,red,#00f,red,#00f,red);background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow 5s linear infinite}.header-ban{color:#8b0000;font-size:.8em;margin-top:-10px}.header-version{font-size:.6em;color:#fff;background:linear-gradient(90deg,red,#00f,red,#00f,red);background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow 5s linear infinite;margin-top:5px}@keyframes rainbow{0%{background-position:0}100%{background-position:100%}}h1 img{width:128px;height:auto;margin-right:10px}label{display:block;margin-bottom:5px}input[type=text]{width:100%;padding:10px;font-size:16px;margin-bottom:10px;background:#fff;border:1px solid #ddd;color:#000;border-radius:4px}body.pink-theme input[type=text]{background:#333;border:1px solid #444;color:#fff}button{background-color:#32cd32;color:#fff;border:2px solid #28a428;padding:12px 22px;font-size:16px;font-weight:700;font-family:Poppins,Arial,sans-serif;border-radius:8px;cursor:pointer;transition:all .3s ease-in-out;text-transform:uppercase;box-shadow:0 0 12px rgba(50,205,50,.7)}button:hover{background-color:#28a428;box-shadow:0 0 18px rgba(50,205,50,.9);transform:scale(1.05)}button:disabled{background-color:#888;border:2px solid #666;box-shadow:none;transform:none;cursor:not-allowed}body.pink-theme button{background-color:#e91e63}body.pink-theme button:hover{background-color:#ec407a}.ban-log{margin-top:20px;padding:10px;background:#fff3cd;border-radius:4px;border:1px solid #ffeeba}body.pink-theme .ban-log{background:#2a2a2a;border:1px solid #ec407a;color:#ff80ab}.ban-log h2{margin-top:0}.ban-log ul{list-style:none;padding-left:0}.ban-log li{margin-bottom:5px;font-size:14px}#lastCheckInfo{margin-bottom:20px;padding:10px;background:#e0f7fa;border:1px solid #4dd0e1;border-radius:4px}body.pink-theme #lastCheckInfo{background:#2a2a2a;border:1px solid #ec407a;color:#ff80ab}#prevContainer{margin-top:20px;background:#e8eaf6;border:1px solid #c5cae9;border-radius:4px;padding:10px;transition:transform .5s ease-out,opacity .5s ease-out}body.pink-theme #prevContainer{background:#2a2a2a;border:1px solid #ec407a;color:#ff80ab}#prevContainer h2{margin:0 0 10px 0;font-size:1.5em;text-align:center}.prevEntry{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ddd;padding:8px 0}body.pink-theme .prevEntry{border-bottom:1px solid #ec407a}.prevEntry:last-child{border-bottom:none}.prevUsername{font-weight:700}.prevStatus{padding:4px 8px;border-radius:4px;color:#fff;margin-right:10px}.statusNotBanned{background:green}.statusBanned{background:red}.statusChecking{background:orange}.statusLoggedIn{background:#ff0;color:#000}.prevCount{font-size:.9em;color:#555;margin-right:10px}.recheckBtn{background-color:#4caf50;border:none;padding:5px 10px;color:#fff;border-radius:4px;cursor:pointer}.recheckBtn:disabled{background-color:#999;cursor:not-allowed}.reset-cookies-btn{position:absolute;top:10px;right:10px;background-color:#ff1a1a;color:#fff;border:none;padding:10px 15px;font-size:14px;border-radius:4px;cursor:pointer;z-index:1100}.reset-cookies-btn:hover{background-color:#e60000}#prevContainer.removing{transform:translateX(100%);opacity:0}.faq-section{background:#111;color:#eee;border-radius:8px;padding:20px;margin-top:20px}body.legacy-theme .faq-section{color:#eee}body.pink-theme .faq-section{color:#ff80ab}.faq-section h2{text-align:center;margin-bottom:20px}.faq-item{border-bottom:1px solid #333;margin-bottom:10px;border-radius:4px;overflow:hidden}.faq-item:last-child{border-bottom:none}.faq-item summary{cursor:pointer;font-size:1.2em;outline:0;padding:10px;background-color:#222;color:#fff}.faq-item summary:hover{background-color:#333}.faq-item summary::-webkit-details-marker{display:none}.faq-item summary:before{content:"❓";display:inline-block;margin-right:10px;transition:transform .3s ease}details[open] .faq-item summary:before{transform:rotate(90deg)}.faq-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s ease,opacity .5s ease;padding:0 10px}details[open] .faq-content{max-height:500px;opacity:1;padding:10px}.faq-content p{margin:0;line-height:1.4}.faq-content iframe{display:block;margin-top:10px;max-width:100%}#themeToggle{position:absolute;top:10px;left:10px;padding:8px 12px;background:rgba(0,0,0,.5);color:#fff;border-radius:4px;cursor:pointer;z-index:2000}body.legacy-theme #themeToggle{background:rgba(0,0,0,.5);color:#fff}body.pink-theme #themeToggle{background:rgba(233,30,99,.8);color:#fff}#heartsContainer{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:100}body.legacy-theme #heartsContainer{display:none}body.pink-theme #heartsContainer{display:block}.heart{position:absolute;width:50px;height:auto;opacity:.8;filter:drop-shadow(0 0 5px #ff80ab);animation:glowFall 8s ease-in-out infinite}@keyframes glowFall{0%{transform:translateY(-50px) scale(.8);opacity:0}20%{opacity:1}50%{transform:translateY(200px) scale(1);opacity:.8}100%{transform:translateY(400px) scale(.8);opacity:0}}.heart:first-child{left:10%;animation-delay:0s}.heart:nth-child(2){left:40%;animation-delay:2s}.heart:nth-child(3){left:70%;animation-delay:4s}.heart:nth-child(4){left:85%;animation-delay:6s}@media (max-width:600px){.container{padding:15px}h1{font-size:2em}button{font-size:14px;padding:8px 15px}}.selfkick-section{margin-top:30px;padding:15px;background:#1a0000;border:2px solid #600;border-radius:6px}.selfkick-section h2{font-size:1.8em;color:#ff4d4d;margin-bottom:10px}.selfkick-section button{background-color:#ff1a1a;color:#fff;border:none;padding:8px 16px;font-size:16px;border-radius:4px;cursor:pointer;margin-right:10px}.selfkick-section button:hover{background-color:#e60000}.selfkick-status{font-size:1.2em;color:#f99;margin-top:10px}.selfkick-log{font-size:1em;max-height:150px;overflow:auto;background:#333;color:#fff;padding:5px;margin-top:10px}</style>
 </head>
 <body>
-  <!-- Theme Toggle Button (Top Left) -->
-  <div id="themeToggle">Theme: Legacy</div>
-  
-  <!-- Floating Hearts (Pink Theme Only) -->
-  <div id="heartsContainer">
-    <img src="pinkheart.png" alt="Heart" class="heart">
-    <img src="pinkheart.png" alt="Heart" class="heart">
-    <img src="pinkheart.png" alt="Heart" class="heart">
-    <img src="pinkheart.png" alt="Heart" class="heart">
-  </div>
-
-  <!-- Warning Message -->
-  <div id="warningMessage"></div>
-  
-  <!-- Reset Cookies Button (now a trash can) -->
-  <button id="resetCookiesBtn" class="reset-cookies-btn">🗑️Remove previous usernames list</button>
-
-  <div class="container">
-    <!-- Header Section -->
-    <h1>
-      <img src="TrackerIcon.png" alt="Icon" style="width:70px; vertical-align:middle; margin-right:5px;">
-      <span class="header-tracker">BlocksMC Tracker</span>
-      <span class="header-ban">Ban</span>
-      <span class="header-version">1.0.4</span>
-    </h1>
-    
-    
-    <!-- Last Check Info -->
-    <div id="lastCheckInfo" style="display:none;"></div>
-    
-    <!-- Username Ban Checker -->
-    <label for="username">Enter a username to check ban status:</label>
-    <input type="text" id="username" placeholder="Enter username" maxlength="16">
-    <button id="checkBtn">Check account status</button>
-
-    <div class="ban-log" id="banLog">
-      <h2>Ban Log</h2>
-      <ul id="logList"></ul>
-    </div>
-    
-    <!-- Previous Usernames Section -->
-    <div id="prevContainer" style="display:none;">
-      <h2>Previous Usernames</h2>
-      <div id="prevList"></div>
-    </div>
-    
-    <!-- FAQ Section (Improved with Animated Accordion) -->
-    <div class="faq-section">
-      <h2>FAQ</h2>
-      <details class="faq-item">
-        <summary>What should I do if a player isn’t banned but I faked a clip of him?</summary>
-        <div class="faq-content">
-          <p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making sure the clip looks legitimate with a similar skin.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>What should I do if I got banned for faking another player's clip, even though they weren't?</summary>
-        <div class="faq-content">
-          <p>You probably provided the wrong in-game name or clip. If you faked the clip—or perhaps tried to report a moderator—they will still ban you permanently. This happened on my main account.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>Why can't we check a premium account status if it is banned?</summary>
-        <div class="faq-content">
-          <p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Instead, to determine if an account is banned, you can track playtime changes.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>How to get someone banned?</summary>
-        <div class="faq-content">
-          <p>Download a name spoofer and skin spoofer mod—or use Vape V4. Record a clip with your bot instance and report via blocksmc.com/report. Note: This typically only works on default-ranked players.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>How to use name spoofer in VAPE V4 against your second instance of bot?</summary>
-        <div class="faq-content">
-          <p>Add your bot's username as a friend (e.g., "nwath FakeUsername") so that it changes. If it fails, try enabling spoofAlias in settings.</p>
-          <iframe width="254" height="268" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>Why does this application have 2 themes? Pink and Legacy?</summary>
-        <div class="faq-content">
-          <p>We created Pink as a design for gamers and Legacy for a classic look—providing two options for different tastes.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>Why did you build this application if we can check ban status through the Minecraft client?</summary>
-        <div class="faq-content">
-          <p>It provides instant access, advanced tracking, and features like a name claimer that runs 24/7. It eliminates the need for an alt manager and helps you monitor accounts continuously.</p>
-        </div>
-      </details>
-    </div>
-    
-   <!-- Redirect Button to OG Username Tracker -->
+<div id=themeToggle>Theme: Legacy</div>
+<div id=heartsContainer>
+<img src=pinkheart.png alt=Heart class=heart>
+<img src=pinkheart.png alt=Heart class=heart>
+<img src=pinkheart.png alt=Heart class=heart>
+<img src=pinkheart.png alt=Heart class=heart>
+</div>
+<div id=warningMessage></div>
+<button id=resetCookiesBtn class=reset-cookies-btn>🗑️Remove previous usernames list</button>
+<div class=container>
+<h1>
+<img src=TrackerIcon.png alt=Icon style=width:70px;vertical-align:middle;margin-right:5px>
+<span class=header-tracker>BlocksMC Tracker</span>
+<span class=header-ban>Ban</span>
+<span class=header-version>1.0.9</span>
+</h1>
+<div id=lastCheckInfo style=display:none></div>
+<label for=username>Enter a username to check ban status:</label>
+<input id=username placeholder="Enter username" maxlength=16>
+<button id=checkBtn>Check account status</button>
+<div class=ban-log id=banLog>
+<h2>Log</h2>
+<ul id=logList></ul>
+</div>
+<div id=prevContainer style=display:none>
+<h2>Previous Usernames</h2>
+<div id=prevList></div>
+</div>
+<div class=faq-section>
+<h2>FAQ</h2>
+<details class=faq-item>
+<summary>What should I do if a player isn’t banned but I faked a clip of him?</summary>
+<div class=faq-content>
+<p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making sure the clip looks legitimate with a similar skin.</p>
+</div>
+</details>
+<details class=faq-item>
+<summary>What should I do if I got banned for faking another player's clip, even though they weren't?</summary>
+<div class=faq-content>
+<p>You probably provided the wrong in-game name or clip. If you faked the clip—or perhaps tried to report a moderator—they will still ban you permanently. This happened on my main account.</p>
+</div>
+</details>
+<details class=faq-item>
+<summary>Why can't we check a premium account status if it is banned?</summary>
+<div class=faq-content>
+<p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Instead, to determine if an account is banned, you can track playtime changes.</p>
+</div>
+</details>
+<details class=faq-item>
+<summary>How to get someone banned?</summary>
+<div class=faq-content>
+<p>Download a name spoofer and skin spoofer mod—or use Vape V4. Record a clip with your bot instance and report via blocksmc.com/report. Note: This typically only works on default-ranked players.</p>
+</div>
+</details>
+<details class=faq-item>
+<summary>How to use name spoofer in VAPE V4 against your second instance of bot?</summary>
+<div class=faq-content>
+<p>Add your bot's username as a friend (e.g., "nwath FakeUsername") so that it changes. If it fails, try enabling spoofAlias in settings.</p>
+<iframe width=254 height=268 src=https://www.youtube.com/embed/7sg4dCT8d8M title="Simple tutorial: How to spoof your username of player to a target username you wanna ban." frameborder=0 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy=strict-origin-when-cross-origin allowfullscreen></iframe>
+</div>
+</details>
+<details class=faq-item>
+<summary>Why does this application have 2 themes? Pink and Legacy?</summary>
+<div class=faq-content>
+<p>We created Pink as a design for gamers and Legacy for a classic look—providing two options for different tastes.</p>
+</div>
+</details>
+<details class=faq-item>
+<summary>Why did you build this application if we can check ban status through the Minecraft client?</summary>
+<div class=faq-content>
+<p>It provides instant access, advanced tracking, and features like a name claimer that runs 24/7. It eliminates the need for an alt manager and helps you monitor accounts continuously.</p>
+</div>
+</details>
+</div>
 <br>
-<button id="redirectToOGBtn" style="width:100%; font-size:18px;">Go to Stealer Account Claimer ➡</button>
-    
-    <!-- SelfKicker Tool Section (Ultra Dark Red Design) -->
-    <div class="selfkick-section" id="selfkickSection">
-      <h2>
-        <img src="selfkicklogo.png" alt="SelfKick Logo" style="height:40px; width:auto; vertical-align:middle; margin-right:10px;">
-        SelfKicker Tool
-      </h2>
-      <div>
-        <button id="enableSelfKickBtn">Enable now</button>
-        <button id="disableSelfKickBtn">Disable</button>
-      </div>
-      <p class="selfkick-status" id="selfKickStatusMsg"></p>
-      <pre class="selfkick-log" id="selfkickLog"></pre>
-    </div>
-    
-  </div>
-  
-  <!-- Audio elements for sound effects -->
-  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio>
-  <audio id="errorSound" src="Error.ogg" preload="auto"></audio>
-  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio>
-  
-  <script>
-    /* ---------- Storage Utility Functions (using localStorage) ---------- */
-    function setCookie(name, value, days) {
-      localStorage.setItem(name, value);
-    }
-    function getCookie(name) {
-      return localStorage.getItem(name);
-    }
-    
-    /* ---------- Theme Toggle Functions ---------- */
-    function updateTheme() {
-      var pink = getCookie("pinkdesign");
-      if (pink === "true") {
-        document.body.classList.remove("legacy-theme");
-        document.body.classList.add("pink-theme");
-        document.getElementById("themeToggle").textContent = "Theme: Pink";
-      } else {
-        document.body.classList.remove("pink-theme");
-        document.body.classList.add("legacy-theme");
-        document.getElementById("themeToggle").textContent = "Theme: Legacy";
-      }
-    }
-    function toggleTheme() {
-      var pink = getCookie("pinkdesign");
-      if (pink === "true") {
-        setCookie("pinkdesign", "false", 7);
-        setCookie("legacydesign", "true", 7);
-      } else {
-        setCookie("pinkdesign", "true", 7);
-        setCookie("legacydesign", "false", 7);
-      }
-      updateTheme();
-    }
-    updateTheme();
-    document.getElementById("themeToggle").addEventListener("click", toggleTheme);
-    
-    const colorMap = {
-      black: '#000000',
-      dark_blue: '#0000AA',
-      dark_green: '#00AA00',
-      dark_aqua: '#00AAAA',
-      dark_red: '#AA0000',
-      dark_purple: '#AA00AA',
-      gold: '#FFAA00',
-      gray: '#AAAAAA',
-      grey: '#AAAAAA',
-      dark_gray: '#555555',
-      dark_grey: '#555555',
-      blue: '#5555FF',
-      green: '#55FF55',
-      aqua: '#55FFFF',
-      red: '#FF5555',
-      light_purple: '#FF55FF',
-      yellow: '#FFFF55',
-      white: '#FFFFFF'
-    };
-    
-    function parseMinecraftMessage(jsonString) {
-      try {
-        const data = JSON.parse(jsonString);
-        if (!data.extra || !Array.isArray(data.extra)) return jsonString;
-        let html = '';
-        data.extra.forEach(part => {
-          let text = part.text || '';
-          text = text.replace(/\n/g, '<br>');
-          const cssColor = colorMap[part.color] || part.color || '#FFFFFF';
-          const boldStyle = part.bold ? 'font-weight:bold;' : '';
-          html += `<span style="color:${cssColor}; ${boldStyle}">${text}</span>`;
-        });
-        return html;
-      } catch (e) {
-        return jsonString;
-      }
-    }
-    function renderMessage(message) {
-      const prefix = "Kicked: ";
-      if (message.startsWith(prefix)) {
-        const jsonPart = message.substring(prefix.length);
-        return prefix + parseMinecraftMessage(jsonPart);
-      }
-      return parseMinecraftMessage(message);
-    }
-    
-    // Use IPC via electronAPI
-    const checkBtn = document.getElementById('checkBtn');
-    const usernameInput = document.getElementById('username');
-    const logList = document.getElementById('logList');
-    const lastCheckInfo = document.getElementById('lastCheckInfo');
-    const prevList = document.getElementById('prevList');
-    const prevContainer = document.getElementById('prevContainer');
-    let currentUsername = "";
-    
-    usernameInput.addEventListener('keydown', (e) => {
-      if (e.key === ' ') e.preventDefault();
-    });
-    
-    function getPrevUsers() {
-      const data = getCookie("prevUsers");
-      return data ? JSON.parse(data) : {};
-    }
-    function setPrevUsers(obj) {
-      setCookie("prevUsers", JSON.stringify(obj), 7);
-    }
-    function updatePrevList() {
-      const prevUsers = getPrevUsers();
-      prevContainer.style.display = Object.keys(prevUsers).length > 0 ? "block" : "none";
-      prevList.innerHTML = "";
-      for (let user in prevUsers) {
-        const entry = prevUsers[user];
-        const div = document.createElement("div");
-        div.className = "prevEntry";
-        
-        // Player head avatar
-        const headImg = document.createElement("img");
-        headImg.src = "https://minotar.net/helm/" + user;
-        headImg.alt = user + "'s head";
-        headImg.style.width = "32px";
-        headImg.style.height = "32px";
-        headImg.style.marginRight = "10px";
-        div.appendChild(headImg);
-        
-        const unameSpan = document.createElement("span");
-        unameSpan.className = "prevUsername";
-        unameSpan.textContent = user;
-        
-        const statusSpan = document.createElement("span");
-        if (entry.status.startsWith("Not banned") || entry.status === "Unbanned") {
-          statusSpan.className = "prevStatus statusNotBanned";
-        } else if (entry.status.startsWith("Banned")) {
-          statusSpan.className = "prevStatus statusBanned";
-        } else if (entry.status.startsWith("Premium Account")) {
-          statusSpan.className = "prevStatus statusChecking";
-        } else if (entry.status === "Unbanned but player is playing right now") {
-          statusSpan.className = "prevStatus statusLoggedIn";
-        } else {
-          statusSpan.className = "prevStatus statusChecking";
-        }
-        statusSpan.textContent = entry.status;
-        
-        const countSpan = document.createElement("span");
-        countSpan.className = "prevCount";
-        countSpan.textContent = " Rechecked status count: " + entry.count;
-        
-        const recheckButton = document.createElement("button");
-        recheckButton.className = "recheckBtn";
-        recheckButton.textContent = "Recheck status";
-        recheckButton.disabled = entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account");
-        recheckButton.addEventListener("click", () => {
-          usernameInput.value = user;
-          checkBtn.click();
-        });
-        
-        div.appendChild(unameSpan);
-        div.appendChild(statusSpan);
-        div.appendChild(countSpan);
-        div.appendChild(recheckButton);
-        prevList.appendChild(div);
-      }
-    }
-    
-    function updateLastCheckInfo() {
-      const lastUsername = getCookie("lastUsername");
-      const lastBanStatus = getCookie("lastBanStatus");
-      let displayStatus = lastBanStatus;
-      if (lastBanStatus && lastBanStatus.includes("<span")) {
-        displayStatus = "The player is currently not banned";
-      }
-      if (lastUsername) {
-        lastCheckInfo.style.display = "block";
-        lastCheckInfo.innerHTML = `
-          <strong>Last Checked:</strong> ${lastUsername} <br>
-          <strong>Status:</strong> ${displayStatus ? displayStatus : "Unknown"} 
-          <br><button id="recheckBtnLast">Re-check this account status</button>
-        `;
-        document.getElementById("recheckBtnLast").addEventListener("click", () => {
-          usernameInput.value = lastUsername;
-          checkBtn.click();
-        });
-      }
-    }
-    updateLastCheckInfo();
-    updatePrevList();
-    
-    checkBtn.addEventListener('click', () => {
-      document.getElementById('buttonSound').play().catch(console.error);
-      
-      const username = usernameInput.value.trim();
-      const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-      if (!validUsernameRegex.test(username)) {
-        document.getElementById('errorSound').play().catch(console.error);
-        alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
-        return;
-      }
-      currentUsername = username;
-      setCookie("lastUsername", username, 7);
-      updateLastCheckInfo();
-      
-      const prevUsers = getPrevUsers();
-      if (prevUsers[username]) {
-        prevUsers[username].count++;
-        prevUsers[username].status = "Checking...";
-      } else {
-        prevUsers[username] = { count: 1, status: "Checking..." };
-      }
-      setPrevUsers(prevUsers);
-      updatePrevList();
-      
-      checkBtn.disabled = true;
-      checkBtn.textContent = "Please wait 3 seconds...";
-      setTimeout(() => { checkBtn.textContent = "Please wait 2 seconds..."; }, 1000);
-      setTimeout(() => { checkBtn.textContent = "Please wait 1 second..."; }, 2000);
-      setTimeout(() => {
-        checkBtn.disabled = false;
-        checkBtn.textContent = "Check";
-      }, 3000);
-      
-      logList.innerHTML = "";
-      window.electronAPI.sendCheckBan(username);
-    });
-    
-    window.electronAPI.onBanResult((message) => {
-      if (message.includes("Error: read ECONNRESET")) {
-        document.getElementById("warningMessage").style.display = "block";
-        document.getElementById("warningMessage").textContent = "WARNING: Maybe my internet is lagging? OR server is down?";
-        return;
-      } else {
-        document.getElementById("warningMessage").style.display = "none";
-      }
-      
-      const li = document.createElement('li');
-      li.innerHTML = renderMessage(message);
-      logList.appendChild(li);
-      
-      setCookie("lastBanStatus", message, 7);
-      updateLastCheckInfo();
-      
-      const prevUsers = getPrevUsers();
-      let status = "";
-      if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
-        status = "Premium Account - Unable To Check. NOTE: You won't be able to check premium accounts due to BlocksMC restrictions.";
-      } else if (message.toLowerCase().includes("you are already logged on to this server")) {
-        status = "Unbanned but player is playing right now";
-      } else {
-        status = message.toLowerCase().includes("not banned") ? "Not banned" : "Banned";
-      }
-      if (prevUsers[currentUsername]) {
-        prevUsers[currentUsername].status = status;
-      }
-      setPrevUsers(prevUsers);
-      updatePrevList();
-      
-      if (status === "Not banned" || status === "Unbanned but player is playing right now") {
-        document.getElementById('unbannedSound').play().catch(console.error);
-      }
-    });
-    window.electronAPI.onKickLog((message) => {
-      const li = document.createElement('li');
-      li.innerHTML = renderMessage(message);
-      logList.appendChild(li);
-    });
-    
-    document.getElementById('resetCookiesBtn').addEventListener('click', function() {
-      if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
-        const prevContainer = document.getElementById("prevContainer");
-        if (prevContainer && prevContainer.style.display !== "none") {
-          // Trigger the slide-out animation
-          prevContainer.classList.add("removing");
-          setTimeout(() => {
-            localStorage.removeItem("prevUsers");
-            updatePrevList();
-            alert("All list of previously usernames were reset.");
-            // Optional: remove the class to allow re-animation later
-            prevContainer.classList.remove("removing");
-          }, 500);
-        } else {
-          localStorage.removeItem("prevUsers");
-          updatePrevList();
-          alert("All list of previously usernames were reset.");
-        }
-      }
-    });
-    
-    document.getElementById("redirectToOGBtn").addEventListener("click", () => {
-      window.location.href = "indexog.html";
-    });
-    
-    // ----- SelfKick Functionality (Buttons Always Clickable) -----
-    const enableSelfKickBtn = document.getElementById("enableSelfKickBtn");
-    const disableSelfKickBtn = document.getElementById("disableSelfKickBtn");
-    const selfKickStatusMsg = document.getElementById("selfKickStatusMsg");
-    
-    enableSelfKickBtn.addEventListener("click", () => {
-      window.electronAPI.enableSelfKick();
-    });
-    
-    disableSelfKickBtn.addEventListener("click", () => {
-      window.electronAPI.disableSelfKick();
-    });
-    
-    window.electronAPI.onSelfKickStatus((status) => {
-      console.log("SelfKick status:", status);
-      if (status === "started") {
-         selfKickStatusMsg.textContent = "Selfkick started.";
-      } else if (status === "stopped") {
-         selfKickStatusMsg.textContent = "Selfkick stopped.";
-      }
-    });
-    
-    // Listen for selfkick logs and append them to the pre tag
-    window.electronAPI.onSelfKickLog((log) => {
-      const logContainer = document.getElementById('selfkickLog');
-      logContainer.textContent += log;
-    });
-  </script>
+<button id=redirectToOGBtn style=width:100%;font-size:18px>Go to Stealer Account Claimer ➡</button>
+<div class=selfkick-section id=selfkickSection>
+<h2>
+<img src=selfkicklogo.png alt="SelfKick Logo" style=height:40px;width:auto;vertical-align:middle;margin-right:10px>
+SelfKicker Tool
+</h2>
+<div>
+<button id=enableSelfKickBtn>Enable now</button>
+<button id=disableSelfKickBtn>Disable</button>
+</div>
+<p class=selfkick-status id=selfKickStatusMsg></p>
+<pre class=selfkick-log id=selfkickLog></pre>
+</div>
+</div>
+<audio id=buttonSound src=buttonOnPressed.ogg preload=auto></audio>
+<audio id=errorSound src=Error.ogg preload=auto></audio>
+<audio id=unbannedSound src=StatusPlayerUnbanned.ogg preload=auto></audio>
+<script>function setCookie(e,t,n){localStorage.setItem(e,t)}function getCookie(e){return localStorage.getItem(e)}function updateTheme(){"true"===getCookie("pinkdesign")?(document.body.classList.remove("legacy-theme"),document.body.classList.add("pink-theme"),document.getElementById("themeToggle").textContent="Theme: Pink"):(document.body.classList.remove("pink-theme"),document.body.classList.add("legacy-theme"),document.getElementById("themeToggle").textContent="Theme: Legacy")}function toggleTheme(){"true"===getCookie("pinkdesign")?(setCookie("pinkdesign","false",7),setCookie("legacydesign","true",7)):(setCookie("pinkdesign","true",7),setCookie("legacydesign","false",7)),updateTheme()}updateTheme(),document.getElementById("themeToggle").addEventListener("click",toggleTheme);const colorMap={black:"#000000",dark_blue:"#0000AA",dark_green:"#00AA00",dark_aqua:"#00AAAA",dark_red:"#AA0000",dark_purple:"#AA00AA",gold:"#FFAA00",gray:"#AAAAAA",grey:"#AAAAAA",dark_gray:"#555555",dark_grey:"#555555",blue:"#5555FF",green:"#55FF55",aqua:"#55FFFF",red:"#FF5555",light_purple:"#FF55FF",yellow:"#FFFF55",white:"#FFFFFF"};function parseMinecraftMessage(e){try{const t=JSON.parse(e);if(!t.extra||!Array.isArray(t.extra))return e;let n="";return t.extra.forEach((e=>{let t=e.text||"";t=t.replace(/\n/g,"<br>");const s=colorMap[e.color]||e.color||"#FFFFFF",o=e.bold?"font-weight:bold;":"";n+=`<span style="color:${s}; ${o}">${t}</span>`})),n}catch(t){return e}}function renderMessage(e){const t="Kicked: ";if(e.startsWith(t)){return t+parseMinecraftMessage(e.substring(t.length))}return parseMinecraftMessage(e)}const checkBtn=document.getElementById("checkBtn"),usernameInput=document.getElementById("username"),logList=document.getElementById("logList"),lastCheckInfo=document.getElementById("lastCheckInfo"),prevList=document.getElementById("prevList"),prevContainer=document.getElementById("prevContainer");let currentUsername="";function getPrevUsers(){const e=getCookie("prevUsers");return e?JSON.parse(e):{}}function setPrevUsers(e){setCookie("prevUsers",JSON.stringify(e),7)}function updatePrevList(){const e=getPrevUsers();prevContainer.style.display=Object.keys(e).length>0?"block":"none",prevList.innerHTML="";for(let t in e){const n=e[t],s=document.createElement("div");s.className="prevEntry";const o=document.createElement("img");o.src="https://minotar.net/helm/"+t,o.alt=t+"'s head",o.style.width="32px",o.style.height="32px",o.style.marginRight="10px",s.appendChild(o);const a=document.createElement("span");a.className="prevUsername",a.textContent=t;const r=document.createElement("span");n.status.startsWith("Not banned")||"Unbanned"===n.status?r.className="prevStatus statusNotBanned":n.status.startsWith("Banned")?r.className="prevStatus statusBanned":n.status.startsWith("Premium Account")?r.className="prevStatus statusChecking":"Unbanned but player is playing right now"===n.status?r.className="prevStatus statusLoggedIn":r.className="prevStatus statusChecking",r.textContent=n.status;const c=document.createElement("span");c.className="prevCount",c.textContent=" Rechecked status count: "+n.count;const l=document.createElement("button");l.className="recheckBtn",l.textContent="Recheck status",l.disabled=n.status.startsWith("Banned")||n.status.startsWith("Premium Account"),l.addEventListener("click",(()=>{usernameInput.value=t,checkBtn.click()})),s.appendChild(a),s.appendChild(r),s.appendChild(c),s.appendChild(l),prevList.appendChild(s)}}function updateLastCheckInfo(){const e=getCookie("lastUsername"),t=getCookie("lastBanStatus");let n=t;t&&t.includes("<span")&&(n="The player is currently not banned"),e&&(lastCheckInfo.style.display="block",lastCheckInfo.innerHTML=`\n          <strong>Last Checked:</strong> ${e} <br>\n          <strong>Status:</strong> ${n||"Unknown"} \n          <br><button id="recheckBtnLast">Re-check this account status</button>\n        `,document.getElementById("recheckBtnLast").addEventListener("click",(()=>{usernameInput.value=e,checkBtn.click()})))}usernameInput.addEventListener("input",(()=>{const e=usernameInput.value.replace(/[^a-zA-Z0-9_]/g,"");usernameInput.value!==e&&(usernameInput.value=e)})),updateLastCheckInfo(),updatePrevList(),checkBtn.addEventListener("click",(()=>{document.getElementById("buttonSound").play().catch(console.error);const e=usernameInput.value.trim();if(!/^[a-zA-Z0-9_]{3,16}$/.test(e))return document.getElementById("errorSound").play().catch(console.error),void alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");currentUsername=e,setCookie("lastUsername",e,7),updateLastCheckInfo();const t=getPrevUsers();t[e]?(t[e].count++,t[e].status="Checking..."):t[e]={count:1,status:"Checking..."},setPrevUsers(t),updatePrevList(),checkBtn.disabled=!0,checkBtn.textContent="Please wait 3 seconds...",setTimeout((()=>{checkBtn.textContent="Please wait 2 seconds..."}),1e3),setTimeout((()=>{checkBtn.textContent="Please wait 1 second..."}),2e3),setTimeout((()=>{checkBtn.disabled=!1,checkBtn.textContent="Check"}),3e3),logList.innerHTML="",window.electronAPI.sendCheckBan(e)})),window.electronAPI.onBanResult((e=>{if(e.includes("Error: read ECONNRESET"))return document.getElementById("warningMessage").style.display="block",void(document.getElementById("warningMessage").textContent="WARNING: Maybe my internet is lagging? OR server is down?");if(document.getElementById("warningMessage").style.display="none",e.includes("You are banned from the server.")){document.getElementById("errorSound").play().catch(console.error);let e=document.getElementById("ipBanBanner");if(!e){e=document.createElement("div"),e.id="ipBanBanner",e.style.color="red",e.style.fontWeight="bold",e.style.marginBottom="10px";const t=document.querySelector(".container");t.insertBefore(e,t.firstChild)}return e.innerHTML="NOTE: You are ip banned means you won't like be able to check accounts but maybe with logged in accounts but still you wodunt be able to tell if account is premium or use name claimer bot to take",lastCheckInfo.style.display="block",void(lastCheckInfo.innerHTML=`<strong>Last Checked:</strong> ${currentUsername} <br>\n          <strong>Status:</strong> <span style="color:red;">NOTE: You are ip banned means you won't like be able to check accounts but maybe with logged in accounts but still you wodunt be able to tell if account is premium or use name claimer bot to take</span>`)}const t=document.createElement("li");t.innerHTML=renderMessage(e),logList.appendChild(t),setCookie("lastBanStatus",e,7),updateLastCheckInfo();const n=getPrevUsers();let s="";s=-1!==e.indexOf('"color":"green","text":"Premium ON')?"Premium Account - Unable To Check. NOTE: You won't be able to check premium accounts due to BlocksMC restrictions.":e.toLowerCase().includes("you are already logged on to this server")?"Unbanned but player is playing right now":e.toLowerCase().includes("not banned")?"Not banned":"Banned",n[currentUsername]&&(n[currentUsername].status=s),setPrevUsers(n),updatePrevList(),"Not banned"!==s&&"Unbanned but player is playing right now"!==s||document.getElementById("unbannedSound").play().catch(console.error)})),window.electronAPI.onKickLog((e=>{const t=document.createElement("li");t.innerHTML=renderMessage(e),logList.appendChild(t)})),document.getElementById("resetCookiesBtn").addEventListener("click",(function(){if(confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")){const e=document.getElementById("prevContainer");e&&"none"!==e.style.display?(e.classList.add("removing"),setTimeout((()=>{localStorage.removeItem("prevUsers"),updatePrevList(),alert("All list of previously usernames were reset."),e.classList.remove("removing")}),500)):(localStorage.removeItem("prevUsers"),updatePrevList(),alert("All list of previously usernames were reset."))}})),document.getElementById("redirectToOGBtn").addEventListener("click",(()=>{window.location.href="indexog.html"}));const enableSelfKickBtn=document.getElementById("enableSelfKickBtn"),disableSelfKickBtn=document.getElementById("disableSelfKickBtn"),selfKickStatusMsg=document.getElementById("selfKickStatusMsg");enableSelfKickBtn.addEventListener("click",(()=>{window.electronAPI.enableSelfKick()})),disableSelfKickBtn.addEventListener("click",(()=>{window.electronAPI.disableSelfKick()})),window.electronAPI.onSelfKickStatus((e=>{console.log("SelfKick status:",e),"started"===e?selfKickStatusMsg.textContent="Selfkick started.":"stopped"===e&&(selfKickStatusMsg.textContent="Selfkick stopped.")})),window.electronAPI.onSelfKickLog((e=>{document.getElementById("selfkickLog").textContent+=e}))</script>
 </body>
 </html>

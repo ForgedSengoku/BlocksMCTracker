@@ -7,111 +7,108 @@
   <style>
     /* ---------- Base Styles ---------- */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 20px;
       overflow-x: hidden;
+      background-color: #e9f0f5;
+      color: #333;
     }
-    body.legacy-theme {
-      background-color: #f5f5f5;
-      color: #000;
-    }
-    body.pink-theme {
-      background-color: #000;
-      color: #fff;
+    body.dark-theme {
+      background-color: #121212;
+      color: #ddd;
     }
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       position: relative;
       z-index: 1;
     }
-    body.pink-theme .container {
-      background: #222;
-      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    body.dark-theme .container {
+      background: #1e1e1e;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.7);
     }
-    /* ---------- Header with Animated Gradient ---------- */
-    h1 {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      background: linear-gradient(45deg, #FF8C00, #FF0000, #FFFF00);
+    /* ---------- New Header Design (No Icon) ---------- */
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    header h1 {
+      font-size: 3em;
+      margin: 0;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-    body.pink-theme h1 {
-      background: linear-gradient(45deg, #e91e63, #ec407a, #f06292);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    header p {
+      font-size: 1.2em;
+      color: #777;
     }
-    h1 img {
-      width: 128px;
-      height: auto;
-      margin-right: 10px;
+    body.dark-theme header p {
+      color: #aaa;
     }
     /* ---------- Form Elements ---------- */
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      font-weight: bold;
     }
     input[type="text"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       font-size: 16px;
-      margin-bottom: 10px;
-      background: #fff;
-      border: 1px solid #ddd;
-      color: #000;
-      border-radius: 4px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
     }
-    body.pink-theme input[type="text"] {
+    body.dark-theme input[type="text"] {
       background: #333;
-      border: 1px solid #444;
+      border: 1px solid #555;
       color: #fff;
     }
+    /* ---------- Lime-Themed Buttons ---------- */
     button {
-      background-color: #4CAF50;
-      color: white;
+      background-color: #32CD32;
+      color: #fff;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 20px;
       font-size: 16px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:disabled {
-      background-color: #999;
-      cursor: not-allowed;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
     button:hover:not(:disabled) {
-      background-color: #45a049;
+      background-color: #2eb82e;
+      transform: scale(1.03);
     }
-    body.pink-theme button {
-      background-color: #e91e63;
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+      transform: none;
     }
-    body.pink-theme button:hover:not(:disabled) {
-      background-color: #ec407a;
+    body.dark-theme button {
+      background-color: #32CD32;
     }
-    /* ---------- Ban Log ---------- */
+    body.dark-theme button:hover:not(:disabled) {
+      background-color: #2eb82e;
+    }
+    /* ---------- Log Area ---------- */
     .ban-log {
       margin-top: 20px;
-      padding: 10px;
-      background: #fff3cd;
-      border-radius: 4px;
-      border: 1px solid #ffeeba;
+      padding: 15px;
+      background: #fdf6ec;
+      border: 1px solid #f0d8b5;
+      border-radius: 6px;
     }
-    body.pink-theme .ban-log {
-      background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
+    body.dark-theme .ban-log {
+      background: #2c2c2c;
+      border: 1px solid #555;
+      color: #ccc;
     }
     .ban-log h2 {
       margin-top: 0;
@@ -121,34 +118,34 @@
       padding-left: 0;
     }
     .ban-log li {
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       font-size: 14px;
     }
-    /* ---------- Last Check Info ---------- */
+    /* ---------- Info Areas ---------- */
     #lastCheckInfo {
       margin-bottom: 20px;
-      padding: 10px;
-      background: #e0f7fa;
-      border: 1px solid #4dd0e1;
-      border-radius: 4px;
+      padding: 12px;
+      background: #e1f5fe;
+      border: 1px solid #81d4fa;
+      border-radius: 6px;
     }
-    body.pink-theme #lastCheckInfo {
+    body.dark-theme #lastCheckInfo {
       background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
+      border: 1px solid #555;
+      color: #ccc;
     }
-    /* ---------- Previous Usernames ---------- */
     #prevContainer {
       margin-top: 20px;
-      background: #e8eaf6;
-      border: 1px solid #c5cae9;
-      border-radius: 4px;
-      padding: 10px;
+      background: #f1f8e9;
+      border: 1px solid #dcedc8;
+      border-radius: 6px;
+      padding: 12px;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
     }
-    body.pink-theme #prevContainer {
+    body.dark-theme #prevContainer {
       background: #2a2a2a;
-      border: 1px solid #ec407a;
-      color: #ff80ab;
+      border: 1px solid #555;
+      color: #ccc;
     }
     #prevContainer h2 {
       margin: 0 0 10px 0;
@@ -162,8 +159,8 @@
       border-bottom: 1px solid #ddd;
       padding: 8px 0;
     }
-    body.pink-theme .prevEntry {
-      border-bottom: 1px solid #ec407a;
+    body.dark-theme .prevEntry {
+      border-bottom: 1px solid #555;
     }
     .prevEntry:last-child {
       border-bottom: none;
@@ -174,28 +171,29 @@
     .prevStatus {
       padding: 4px 8px;
       border-radius: 4px;
-      color: white;
+      color: #fff;
       margin-right: 10px;
+      font-size: 0.9em;
     }
     .statusNotBanned { background: green; }
     .statusBanned { background: red; }
     .statusChecking { background: orange; }
-    .statusLoggedIn { background: yellow; color: black; }
+    .statusLoggedIn { background: yellow; color: #333; }
     .prevCount {
-      font-size: 0.9em;
-      color: #555;
-      margin-right: 10px;
+      font-size: 0.8em;
+      color: #666;
     }
     .recheckBtn {
-      background-color: #4CAF50;
+      background-color: #32CD32;
       border: none;
-      padding: 5px 10px;
-      color: white;
+      padding: 8px 14px;
+      color: #fff;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 0.9em;
     }
     .recheckBtn:disabled {
-      background-color: #999;
+      background-color: #aaa;
       cursor: not-allowed;
     }
     /* ---------- Reset Cookies Button ---------- */
@@ -203,7 +201,7 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background-color: #d9534f;
+      background-color: #32CD32;
       color: white;
       border: none;
       padding: 10px 15px;
@@ -213,22 +211,40 @@
       z-index: 1100;
     }
     .reset-cookies-btn:hover {
-      background-color: #c9302c;
+      background-color: #2eb82e;
     }
-    /* ---------- FAQ Section ---------- */
+    /* ---------- Warning Note (30% Reduced Size) ---------- */
+    .download-note {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #ffebee;
+      border: 2px solid #f44336;
+      border-radius: 8px;
+      color: #d32f2f;
+      font-weight: bold;
+      text-align: center;
+      font-size: 70%;
+    }
+    /* ---------- FAQ Section with Simple Accordion ---------- */
     .faq-section {
-      background: #111;
-      color: #eee;
+      background: #fff;
+      color: #333;
       border-radius: 8px;
       padding: 20px;
       margin-top: 20px;
+      border: 1px solid #ccc;
+    }
+    body.dark-theme .faq-section {
+      background: #1e1e1e;
+      color: #ddd;
+      border: 1px solid #555;
     }
     .faq-section h2 {
       text-align: center;
       margin-bottom: 20px;
     }
     .faq-item {
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #ddd;
       padding: 10px 0;
     }
     .faq-item:last-child {
@@ -236,27 +252,16 @@
     }
     .faq-item summary {
       cursor: pointer;
-      font-size: 1.2em;
+      font-size: 1.1em;
       outline: none;
+      font-weight: bold;
     }
     .faq-item p {
       margin-top: 10px;
       padding-left: 20px;
       line-height: 1.4;
     }
-    /* ---------- Theme Toggle Button ---------- */
-    #themeToggle {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      padding: 8px 12px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 2000;
-    }
-    /* ---------- Floating Hearts (Pink Theme Only) ---------- */
+    /* ---------- Floating Hearts (for Dark Theme Accent) ---------- */
     #heartsContainer {
       position: fixed;
       top: 0;
@@ -265,25 +270,21 @@
       pointer-events: none;
       z-index: 100;
     }
-    body.legacy-theme #heartsContainer {
+    body:not(.dark-theme) #heartsContainer {
       display: none;
-    }
-    body.pink-theme #heartsContainer {
-      display: block;
     }
     .heart {
       position: absolute;
-      width: 50px;
+      width: 40px;
       height: auto;
       opacity: 0.8;
-      filter: drop-shadow(0 0 5px #ff80ab);
-      animation: glowFall 8s ease-in-out infinite;
+      animation: floatHearts 8s ease-in-out infinite;
     }
-    @keyframes glowFall {
-      0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+    @keyframes floatHearts {
+      0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
       20% { opacity: 1; }
-      50% { transform: translateY(200px) scale(1); opacity: 0.8; }
-      100% { transform: translateY(400px) scale(0.8); opacity: 0; }
+      50% { transform: translateY(150px) scale(1); opacity: 0.8; }
+      100% { transform: translateY(300px) scale(0.8); opacity: 0; }
     }
     .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
     .heart:nth-child(2) { left: 40%; animation-delay: 2s; }
@@ -291,28 +292,16 @@
     .heart:nth-child(4) { left: 85%; animation-delay: 6s; }
     @media (max-width: 600px) {
       .container { padding: 15px; }
-      h1 { font-size: 2em; }
-      button { font-size: 14px; padding: 8px 15px; }
-    }
-    /* ---------- Warning Note (30% Reduced Size) ---------- */
-    .download-note {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #ffe6e6;
-      border: 2px solid red;
-      border-radius: 8px;
-      color: red;
-      font-weight: bold;
-      text-align: center;
-      font-size: 70%;
+      header h1 { font-size: 2em; }
+      button { font-size: 14px; padding: 10px 16px; }
     }
   </style>
 </head>
-<body class="legacy-theme">
+<body class="dark-theme">
   <!-- Theme Toggle Button (Top Left) -->
-  <div id="themeToggle">Theme: Legacy</div>
+  <div id="themeToggle" style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.5); color:#fff; padding:8px 12px; border-radius:4px; cursor:pointer;">Theme: Dark</div>
   
-  <!-- Floating Hearts (Pink Theme Only) -->
+  <!-- Floating Hearts (Visible in Dark Theme) -->
   <div id="heartsContainer">
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
@@ -321,21 +310,21 @@
   </div>
   
   <!-- Reset Cookies Button -->
-  <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
-
+  <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames</button>
+  
   <div class="container">
-    <h1>
-      <img src="TrackerIcon.png" alt="Icon">
-      BlocksMC Tracker Tool
-    </h1>
+    <header>
+      <h1>BlocksMC Tracker</h1>
+      <p>Ban Tracker Only</p>
+    </header>
     
     <!-- Last Check Info -->
     <div id="lastCheckInfo" style="display:none;"></div>
     
     <!-- Username Ban Checker -->
-    <label for="username">Enter a username to check ban status:</label>
+    <label for="username">Enter a username:</label>
     <input type="text" id="username" placeholder="Enter username" maxlength="16">
-    <button id="checkBtn">Check</button>
+    <button id="checkBtn">Check Status</button>
     
     <div class="ban-log" id="banLog">
       <h2>Ban Log</h2>
@@ -348,9 +337,9 @@
       <div id="prevList"></div>
     </div>
     
-    <!-- Warning Note (Moved below Previous Usernames) -->
+    <!-- Warning Note -->
     <div class="download-note">
-      Warning: This website will get updates but not for like og username tracker becuase it uses our IP which could be antivpn detected and please use the electron app for better stability and its own IP to avoid getting blocked by antivpn systems.
+      Warning: This website gets updates but does not support OG username tracker because it uses our IP (subject to anti-VPN detection). For improved stability with a dedicated IP, please use our Electron app.
     </div>
     
     <!-- FAQ Section -->
@@ -359,44 +348,44 @@
       <details class="faq-item">
         <summary>What should I do if a player isn’t banned but I faked a clip of him?</summary>
         <div class="faq-content">
-          <p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making sure the clip looks legitimate with a similar skin.</p>
+          <p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making the clip look legitimate with a similar skin.</p>
         </div>
       </details>
       <details class="faq-item">
         <summary>What should I do if I got banned for faking another player's clip, even though they weren't?</summary>
         <div class="faq-content">
-          <p>You probably provided the wrong in-game name or clip. If you faked the clip—or perhaps tried to report a moderator—they will still ban you permanently. This happened on my main account.</p>
+          <p>You likely provided the wrong in-game name or clip. If you faked the clip—or tried to report a moderator—they may still ban you permanently.</p>
         </div>
       </details>
       <details class="faq-item">
         <summary>Why can't we check a premium account status if it is banned?</summary>
         <div class="faq-content">
-          <p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Instead, to determine if an account is banned, you can track playtime changes.</p>
+          <p>BlocksMC applied a patch that prevents direct premium status checks. Instead, we track playtime changes to determine if an account is banned.</p>
         </div>
       </details>
       <details class="faq-item">
         <summary>How to get someone banned?</summary>
         <div class="faq-content">
-          <p>Download a name spoofer and skin spoofer mod—or use Vape V4. Record a clip with your bot instance and report via blocksmc.com/report. Note: This typically only works on default-ranked players.</p>
+          <p>Download a name and skin spoofer mod—or use Vape V4—record a clip with your bot instance and report via blocksmc.com/report. This typically works only on default-ranked players.</p>
         </div>
       </details>
       <details class="faq-item">
-        <summary>How to use name spoofer in VAPE V4 against your second instance of bot?</summary>
+        <summary>How to use name spoofer in VAPE V4 against your second bot instance?</summary>
         <div class="faq-content">
           <p>Add your bot's username as a friend (e.g., "nwath FakeUsername") so that it changes. If it fails, try enabling spoofAlias in settings.</p>
-          <iframe width="254" height="268" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Tutorial: How to spoof your username" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <iframe width="254" height="268" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Tutorial: Spoof your username" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
       </details>
       <details class="faq-item">
-        <summary>Why does this application have 2 themes? Pink and Legacy?</summary>
+        <summary>Why does this application have two themes: Dark and Light?</summary>
         <div class="faq-content">
-          <p>We created Pink as a design for gamers and Legacy for a classic look—providing two options for different tastes.</p>
+          <p>We offer Dark for a modern look and Light for a classic feel – choose the one that suits you best.</p>
         </div>
       </details>
       <details class="faq-item">
-        <summary>Why did you build this application if we can check ban status through the Minecraft client?</summary>
+        <summary>Why build this application if ban status can be checked through Minecraft?</summary>
         <div class="faq-content">
-          <p>It provides instant access, advanced tracking, and continuous monitoring without the need for an alt manager.</p>
+          <p>It provides instant access, advanced tracking, and continuous monitoring without needing an alt manager.</p>
         </div>
       </details>
     </div>
@@ -408,47 +397,30 @@
   <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio>
   
   <script>
-    // ---------- Cookie Utility Functions ----------
+    // ---------- Storage Utility Functions ----------
     function setCookie(name, value, days) {
-      var expires = "";
-      if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-      }
-      document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+      localStorage.setItem(name, value);
     }
     function getCookie(name) {
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(';');
-      for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-      }
-      return null;
+      return localStorage.getItem(name);
     }
     
     // ---------- Theme Toggle Functions ----------
     function updateTheme() {
-      var pink = getCookie("pinkdesign");
-      if (pink === "true") {
-        document.body.classList.remove("legacy-theme");
-        document.body.classList.add("pink-theme");
-        document.getElementById("themeToggle").textContent = "Theme: Pink";
+      var dark = getCookie("darkTheme");
+      if (dark === "true") {
+        document.body.classList.add("dark-theme");
+        document.body.classList.remove("light-theme");
+        document.getElementById("themeToggle").textContent = "Theme: Dark";
       } else {
-        document.body.classList.remove("pink-theme");
-        document.body.classList.add("legacy-theme");
-        document.getElementById("themeToggle").textContent = "Theme: Legacy";
+        document.body.classList.remove("dark-theme");
+        document.body.classList.add("light-theme");
+        document.getElementById("themeToggle").textContent = "Theme: Light";
       }
     }
     function toggleTheme() {
-      var pink = getCookie("pinkdesign");
-      if (pink === "true") {
-        setCookie("pinkdesign", "false", 7);
-      } else {
-        setCookie("pinkdesign", "true", 7);
-      }
+      var dark = getCookie("darkTheme");
+      setCookie("darkTheme", dark === "true" ? "false" : "true", 7);
       updateTheme();
     }
     updateTheme();
@@ -520,7 +492,7 @@
         const div = document.createElement("div");
         div.className = "prevEntry";
         
-        // Player head image (32px)
+        // Player head avatar
         const headImg = document.createElement("img");
         headImg.src = "https://minotar.net/helm/" + user;
         headImg.alt = user + "'s head";
@@ -538,6 +510,10 @@
           statusSpan.className = "prevStatus statusNotBanned";
         } else if (entry.status.startsWith("Banned")) {
           statusSpan.className = "prevStatus statusBanned";
+        } else if (entry.status.startsWith("Premium Account")) {
+          statusSpan.className = "prevStatus statusChecking";
+        } else if (entry.status === "Unbanned but player is playing") {
+          statusSpan.className = "prevStatus statusLoggedIn";
         } else {
           statusSpan.className = "prevStatus statusChecking";
         }
@@ -545,12 +521,12 @@
         
         const countSpan = document.createElement("span");
         countSpan.className = "prevCount";
-        countSpan.textContent = "Recheck count: " + entry.count;
+        countSpan.textContent = " Rechecked: " + entry.count;
         
         const recheckButton = document.createElement("button");
         recheckButton.className = "recheckBtn";
-        recheckButton.textContent = "ReCheck";
-        recheckButton.disabled = entry.status.startsWith("Banned");
+        recheckButton.textContent = "Recheck";
+        recheckButton.disabled = entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account");
         recheckButton.addEventListener("click", () => {
           document.getElementById("username").value = user;
           document.getElementById("checkBtn").click();
@@ -577,7 +553,7 @@
         lastCheckInfo.innerHTML = `
           <strong>Last Checked:</strong> ${lastUsername} <br>
           <strong>Status:</strong> ${displayStatus ? displayStatus : "Unknown"} 
-          <br><button id="recheckBtnLast">Re-check this username</button>
+          <br><button id="recheckBtnLast">Re-check</button>
         `;
         document.getElementById("recheckBtnLast").addEventListener("click", () => {
           document.getElementById("username").value = lastUsername;
@@ -588,7 +564,7 @@
     updateLastCheckInfo();
     updatePrevList();
     
-    // ---------- Check Button Event Handler using HTTP POST ----------
+    // ---------- Check Button Event Handler using HTTPS fetch ----------
     const checkBtn = document.getElementById('checkBtn');
     const usernameInput = document.getElementById('username');
     const logList = document.getElementById('logList');
@@ -605,11 +581,12 @@
       const validUsernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
       if (!validUsernameRegex.test(username)) {
         document.getElementById('errorSound').play().catch(console.error);
-        alert("Invalid username. Please use only letters, numbers, and underscores (3-16 characters) with no spaces.");
+        alert("Invalid username. Use only letters, numbers, and underscores (3-16 characters).");
         return;
       }
       currentUsername = username;
       setCookie("lastUsername", username, 7);
+      updateLastCheckInfo();
       
       const prevUsers = getPrevUsers();
       if (prevUsers[username]) {
@@ -622,17 +599,15 @@
       updatePrevList();
       
       checkBtn.disabled = true;
-      checkBtn.textContent = "Please wait 7 seconds...";
-      setTimeout(() => { checkBtn.textContent = "Please wait 6 seconds..."; }, 1000);
-      setTimeout(() => { checkBtn.textContent = "Please wait 4 seconds..."; }, 3000);
-      setTimeout(() => { checkBtn.textContent = "Please wait 2 seconds..."; }, 5000);
+      checkBtn.textContent = "Please wait 3 seconds...";
+      setTimeout(() => { checkBtn.textContent = "Please wait 2 seconds..."; }, 1000);
+      setTimeout(() => { checkBtn.textContent = "Please wait 1 second..."; }, 2000);
       setTimeout(() => {
         checkBtn.disabled = false;
-        checkBtn.textContent = "Check";
-      }, 7000);
+        checkBtn.textContent = "Check Status";
+      }, 3000);
       
       logList.innerHTML = "";
-      
       fetch('/checkBan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -648,14 +623,21 @@
         updateLastCheckInfo();
         
         const prevUsers = getPrevUsers();
-        let status = message.toLowerCase().includes("not banned") ? "Not banned" : "Banned";
+        let status = "";
+        if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
+          status = "Premium Account - Unable To Check. Premium accounts cannot be checked due to BlocksMC restrictions.";
+        } else if (message.toLowerCase().includes("you are already logged on to this server")) {
+          status = "Unbanned but player is playing";
+        } else {
+          status = message.toLowerCase().includes("not banned") ? "Not banned" : "Banned";
+        }
         if (prevUsers[currentUsername]) {
           prevUsers[currentUsername].status = status;
         }
         setPrevUsers(prevUsers);
         updatePrevList();
         
-        if (status === "Not banned") {
+        if (status === "Not banned" || status === "Unbanned but player is playing") {
           document.getElementById('unbannedSound').play().catch(console.error);
         }
       })
@@ -667,10 +649,10 @@
     
     // ---------- Reset Cookies Button ----------
     document.getElementById('resetCookiesBtn').addEventListener('click', function() {
-      if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
-        setCookie("prevUsers", "", -1);
+      if (confirm("Warning: This will erase all previous usernames. Continue?")) {
+        localStorage.removeItem("prevUsers");
         updatePrevList();
-        alert("All previous usernames have been reset.");
+        alert("Previous usernames have been reset.");
       }
     });
   </script>

@@ -34,7 +34,7 @@
       background: #222;
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
     }
-    /* ---------- Heading with Gradient ---------- */
+    /* ---------- Header with Animated Gradient ---------- */
     h1 {
       display: flex;
       align-items: center;
@@ -85,6 +85,7 @@
       font-size: 16px;
       border-radius: 4px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
     button:disabled {
       background-color: #999;
@@ -222,10 +223,6 @@
       padding: 20px;
       margin-top: 20px;
     }
-    body.legacy-theme .faq-section,
-    body.pink-theme .faq-section {
-      color: inherit;
-    }
     .faq-section h2 {
       text-align: center;
       margin-bottom: 20px;
@@ -297,7 +294,7 @@
       h1 { font-size: 2em; }
       button { font-size: 14px; padding: 8px 15px; }
     }
-    /* ---------- Warning Note ---------- */
+    /* ---------- Warning Note (30% Reduced Size) ---------- */
     .download-note {
       margin-top: 20px;
       padding: 15px;
@@ -307,7 +304,6 @@
       color: red;
       font-weight: bold;
       text-align: center;
-      /* Reduce size by 30% */
       font-size: 70%;
     }
   </style>
@@ -322,11 +318,6 @@
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
-  </div>
-  
-  <!-- Warning Note with Updated Text -->
-  <div class="download-note">
-    Warning: This website will get updates but not for like og username tracker becuase it uses our IP which could be antivpn detected and please use electron app for better stabilty and its own ip to avoid getting blocked by antivpn systems.
   </div>
   
   <!-- Reset Cookies Button -->
@@ -355,6 +346,11 @@
     <div id="prevContainer" style="display:none;">
       <h2>Previous Usernames</h2>
       <div id="prevList"></div>
+    </div>
+    
+    <!-- Warning Note (Moved below Previous Usernames) -->
+    <div class="download-note">
+      Warning: This website will get updates but not for like og username tracker becuase it uses our IP which could be antivpn detected and please use the electron app for better stability and its own IP to avoid getting blocked by antivpn systems.
     </div>
     
     <!-- FAQ Section -->
@@ -400,7 +396,7 @@
       <details class="faq-item">
         <summary>Why did you build this application if we can check ban status through the Minecraft client?</summary>
         <div class="faq-content">
-          <p>It provides instant access, advanced tracking, and features like continuous monitoring without the need for an alt manager.</p>
+          <p>It provides instant access, advanced tracking, and continuous monitoring without the need for an alt manager.</p>
         </div>
       </details>
     </div>

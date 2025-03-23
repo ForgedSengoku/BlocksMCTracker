@@ -1,32 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- L1 -->
   <meta charset="UTF-8">
-  <!-- L2 -->
   <title>BlocksMC Ban Tracker Website</title>
-  <!-- L3 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- L4 -->
   <style>
-    /* ---------- Base Styles (Legacy Default) ---------- */ /* L5 */
+    /* ---------- Base Styles ---------- */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
       overflow-x: hidden;
     }
-    /* Legacy theme (default) */
     body.legacy-theme {
       background-color: #f5f5f5;
       color: #000;
     }
-    /* Pink (Valentine’s) theme */
     body.pink-theme {
       background-color: #000;
       color: #fff;
     }
-    /* ---------- Container ---------- */
     .container {
       max-width: 600px;
       margin: auto;
@@ -37,12 +30,11 @@
       position: relative;
       z-index: 1;
     }
-    /* Adjust container for pink theme */
     body.pink-theme .container {
       background: #222;
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
     }
-    /* ---------- Heading with Icon ---------- */
+    /* ---------- Heading with Gradient ---------- */
     h1 {
       display: flex;
       align-items: center;
@@ -54,7 +46,6 @@
       -webkit-text-fill-color: transparent;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-    /* Pink theme heading override */
     body.pink-theme h1 {
       background: linear-gradient(45deg, #e91e63, #ec407a, #f06292);
       -webkit-background-clip: text;
@@ -231,11 +222,9 @@
       padding: 20px;
       margin-top: 20px;
     }
-    body.legacy-theme .faq-section {
-      color: #eee;
-    }
+    body.legacy-theme .faq-section,
     body.pink-theme .faq-section {
-      color: #ff80ab;
+      color: inherit;
     }
     .faq-section h2 {
       text-align: center;
@@ -258,7 +247,7 @@
       padding-left: 20px;
       line-height: 1.4;
     }
-    /* ---------- Theme Toggle Button (Top Left) ---------- */
+    /* ---------- Theme Toggle Button ---------- */
     #themeToggle {
       position: absolute;
       top: 10px;
@@ -269,14 +258,6 @@
       border-radius: 4px;
       cursor: pointer;
       z-index: 2000;
-    }
-    body.legacy-theme #themeToggle {
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-    }
-    body.pink-theme #themeToggle {
-      background: rgba(233,30,99,0.8);
-      color: #fff;
     }
     /* ---------- Floating Hearts (Pink Theme Only) ---------- */
     #heartsContainer {
@@ -311,13 +292,12 @@
     .heart:nth-child(2) { left: 40%; animation-delay: 2s; }
     .heart:nth-child(3) { left: 70%; animation-delay: 4s; }
     .heart:nth-child(4) { left: 85%; animation-delay: 6s; }
-    /* ---------- Responsive Adjustments ---------- */
     @media (max-width: 600px) {
       .container { padding: 15px; }
       h1 { font-size: 2em; }
       button { font-size: 14px; padding: 8px 15px; }
     }
-    /* ---------- Note at the Bottom ---------- */
+    /* ---------- Warning Note ---------- */
     .download-note {
       margin-top: 20px;
       padding: 15px;
@@ -327,14 +307,16 @@
       color: red;
       font-weight: bold;
       text-align: center;
+      /* Reduce size by 30% */
+      font-size: 70%;
     }
   </style>
 </head>
-<body>
-  <!-- Theme Toggle Button (Top Left) --> <!-- L100 -->
+<body class="legacy-theme">
+  <!-- Theme Toggle Button (Top Left) -->
   <div id="themeToggle">Theme: Legacy</div>
   
-  <!-- Floating Hearts (Pink Theme Only) --> <!-- L102 -->
+  <!-- Floating Hearts (Pink Theme Only) -->
   <div id="heartsContainer">
     <img src="pinkheart.png" alt="Heart" class="heart">
     <img src="pinkheart.png" alt="Heart" class="heart">
@@ -342,58 +324,95 @@
     <img src="pinkheart.png" alt="Heart" class="heart">
   </div>
   
-  <!-- Note at the website discontinued --> <!-- L109 -->
+  <!-- Warning Note with Updated Text -->
   <div class="download-note">
-    Warning: This website is discontinued and won't get any updates! To get updates download our app from <a href="https://github.com/ForgedSengoku/BlocksMCTracker/releases" style="color: red; text-decoration: underline;">GitHub Releases</a><br>
-    In our electron app we have sounds and more features like OG Username Tracker, but the website is limited to ban tracker only!
+    Warning: This website will get updates but not for like og username tracker becuase it uses our IP which could be antivpn detected and please use electron app for better stabilty and its own ip to avoid getting blocked by antivpn systems.
   </div>
   
-  <!-- Audio elements for sound effects --> <!-- L116 -->
-  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio> <!-- L117 -->
-  <audio id="errorSound" src="Error.ogg" preload="auto"></audio> <!-- L118 -->
-  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio> <!-- L119 -->
-
-  <!-- Warning Message --> <!-- L121 -->
-  <div id="warningMessage"></div>
-  
-  <!-- Reset Cookies Button --> <!-- L123 -->
+  <!-- Reset Cookies Button -->
   <button id="resetCookiesBtn" class="reset-cookies-btn">Erase Usernames List</button>
 
-  <div class="container"> <!-- L126 -->
+  <div class="container">
     <h1>
       <img src="TrackerIcon.png" alt="Icon">
       BlocksMC Tracker Tool
     </h1>
     
-    <!-- Last Check Info --> <!-- L131 -->
+    <!-- Last Check Info -->
     <div id="lastCheckInfo" style="display:none;"></div>
     
-    <label for="username">Enter a username to check ban status:</label> <!-- L134 -->
-    <input type="text" id="username" placeholder="Enter username" maxlength="16"> <!-- L135 -->
-    <button id="checkBtn">Check</button> <!-- L136 -->
-
-    <div class="ban-log" id="banLog"> <!-- L138 -->
+    <!-- Username Ban Checker -->
+    <label for="username">Enter a username to check ban status:</label>
+    <input type="text" id="username" placeholder="Enter username" maxlength="16">
+    <button id="checkBtn">Check</button>
+    
+    <div class="ban-log" id="banLog">
       <h2>Ban Log</h2>
       <ul id="logList"></ul>
     </div>
     
-    <!-- Previous Usernames Section --> <!-- L143 -->
+    <!-- Previous Usernames Section -->
     <div id="prevContainer" style="display:none;">
       <h2>Previous Usernames</h2>
       <div id="prevList"></div>
     </div>
     
-    <!-- FAQ Section (All FAQs restored) --> <!-- L148 -->
+    <!-- FAQ Section -->
     <div class="faq-section">
       <h2>FAQ</h2>
-      <!-- (FAQ items remain unchanged) -->
+      <details class="faq-item">
+        <summary>What should I do if a player isn’t banned but I faked a clip of him?</summary>
+        <div class="faq-content">
+          <p>Wait for a moderator and ensure that when you faked the clip you used a second instance of Minecraft via a bot, and that you spoofed your bot’s username into your target’s name—making sure the clip looks legitimate with a similar skin.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>What should I do if I got banned for faking another player's clip, even though they weren't?</summary>
+        <div class="faq-content">
+          <p>You probably provided the wrong in-game name or clip. If you faked the clip—or perhaps tried to report a moderator—they will still ban you permanently. This happened on my main account.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Why can't we check a premium account status if it is banned?</summary>
+        <div class="faq-content">
+          <p>BlocksMC applied a patch, so we can’t unequivocally check if an account is banned. Instead, to determine if an account is banned, you can track playtime changes.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How to get someone banned?</summary>
+        <div class="faq-content">
+          <p>Download a name spoofer and skin spoofer mod—or use Vape V4. Record a clip with your bot instance and report via blocksmc.com/report. Note: This typically only works on default-ranked players.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How to use name spoofer in VAPE V4 against your second instance of bot?</summary>
+        <div class="faq-content">
+          <p>Add your bot's username as a friend (e.g., "nwath FakeUsername") so that it changes. If it fails, try enabling spoofAlias in settings.</p>
+          <iframe width="254" height="268" src="https://www.youtube.com/embed/7sg4dCT8d8M" title="Tutorial: How to spoof your username" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Why does this application have 2 themes? Pink and Legacy?</summary>
+        <div class="faq-content">
+          <p>We created Pink as a design for gamers and Legacy for a classic look—providing two options for different tastes.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Why did you build this application if we can check ban status through the Minecraft client?</summary>
+        <div class="faq-content">
+          <p>It provides instant access, advanced tracking, and features like continuous monitoring without the need for an alt manager.</p>
+        </div>
+      </details>
     </div>
   </div>
-
-  <!-- Removed Socket.IO Client Library -->
-
+  
+  <!-- Audio elements for sound effects -->
+  <audio id="buttonSound" src="buttonOnPressed.ogg" preload="auto"></audio>
+  <audio id="errorSound" src="Error.ogg" preload="auto"></audio>
+  <audio id="unbannedSound" src="StatusPlayerUnbanned.ogg" preload="auto"></audio>
+  
   <script>
-    // ---------- Cookie Utility Functions ---------- //
+    // ---------- Cookie Utility Functions ----------
     function setCookie(name, value, days) {
       var expires = "";
       if (days) {
@@ -401,20 +420,20 @@
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         expires = "; expires=" + date.toUTCString();
       }
-      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+      document.cookie = name + "=" + (value || "")  + expires + "; path=/";
     }
     function getCookie(name) {
       var nameEQ = name + "=";
       var ca = document.cookie.split(';');
-      for (var i = 0; i < ca.length; i++) {
+      for(var i=0;i < ca.length;i++) {
         var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
       }
       return null;
     }
     
-    // ---------- Theme Toggle Functions ---------- //
+    // ---------- Theme Toggle Functions ----------
     function updateTheme() {
       var pink = getCookie("pinkdesign");
       if (pink === "true") {
@@ -431,10 +450,8 @@
       var pink = getCookie("pinkdesign");
       if (pink === "true") {
         setCookie("pinkdesign", "false", 7);
-        setCookie("legacydesign", "true", 7);
       } else {
         setCookie("pinkdesign", "true", 7);
-        setCookie("legacydesign", "false", 7);
       }
       updateTheme();
     }
@@ -488,7 +505,7 @@
       return parseMinecraftMessage(message);
     }
     
-    // ---------- Previous Usernames and Last Check Info ---------- //
+    // ---------- Previous Usernames and Last Check Info ----------
     function getPrevUsers() {
       const data = getCookie("prevUsers");
       return data ? JSON.parse(data) : {};
@@ -507,7 +524,7 @@
         const div = document.createElement("div");
         div.className = "prevEntry";
         
-        // Create and add the player's head image (32px)
+        // Player head image (32px)
         const headImg = document.createElement("img");
         headImg.src = "https://minotar.net/helm/" + user;
         headImg.alt = user + "'s head";
@@ -525,10 +542,6 @@
           statusSpan.className = "prevStatus statusNotBanned";
         } else if (entry.status.startsWith("Banned")) {
           statusSpan.className = "prevStatus statusBanned";
-        } else if (entry.status.startsWith("Premium Account")) {
-          statusSpan.className = "prevStatus statusChecking";
-        } else if (entry.status === "Unbanned but player is playing right now") {
-          statusSpan.className = "prevStatus statusLoggedIn";
         } else {
           statusSpan.className = "prevStatus statusChecking";
         }
@@ -541,7 +554,7 @@
         const recheckButton = document.createElement("button");
         recheckButton.className = "recheckBtn";
         recheckButton.textContent = "ReCheck";
-        recheckButton.disabled = entry.status.startsWith("Banned") || entry.status.startsWith("Premium Account");
+        recheckButton.disabled = entry.status.startsWith("Banned");
         recheckButton.addEventListener("click", () => {
           document.getElementById("username").value = user;
           document.getElementById("checkBtn").click();
@@ -590,7 +603,6 @@
     });
     
     checkBtn.addEventListener('click', () => {
-      // Play button sound
       document.getElementById('buttonSound').play().catch(console.error);
       
       const username = usernameInput.value.trim();
@@ -623,15 +635,11 @@
         checkBtn.textContent = "Check";
       }, 7000);
       
-      // Clear previous log
       logList.innerHTML = "";
       
-      // Use fetch to send a POST request over HTTP
       fetch('/checkBan', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username })
       })
       .then(response => response.json())
@@ -644,21 +652,14 @@
         updateLastCheckInfo();
         
         const prevUsers = getPrevUsers();
-        let status = "";
-        if (message.indexOf('"color":"green","text":"Premium ON') !== -1) {
-          status = "Premium Account - Unable To Check. NOTE: You won't be able to check premium accounts due to BlocksMC restrictions.";
-        } else if (message.toLowerCase().includes("you are already logged on to this server")) {
-          status = "Unbanned but player is playing right now";
-        } else {
-          status = message.toLowerCase().includes("not banned") ? "Not banned" : "Banned";
-        }
+        let status = message.toLowerCase().includes("not banned") ? "Not banned" : "Banned";
         if (prevUsers[currentUsername]) {
           prevUsers[currentUsername].status = status;
         }
         setPrevUsers(prevUsers);
         updatePrevList();
         
-        if (status === "Not banned" || status === "Unbanned but player is playing right now") {
+        if (status === "Not banned") {
           document.getElementById('unbannedSound').play().catch(console.error);
         }
       })
@@ -673,7 +674,7 @@
       if (confirm("Warning: All previous usernames will be erased. Are you sure you want to continue?")) {
         setCookie("prevUsers", "", -1);
         updatePrevList();
-        alert("All list of previous usernames were reset.");
+        alert("All previous usernames have been reset.");
       }
     });
   </script>

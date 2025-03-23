@@ -32,21 +32,38 @@
       background: #1e1e1e;
       box-shadow: 0 8px 16px rgba(0,0,0,0.7);
     }
-    /* ---------- New Header Design (No Icon) ---------- */
+    /* ---------- Header Design with Rainbow Text and Icon ---------- */
     header {
       text-align: center;
       margin-bottom: 30px;
     }
     header h1 {
-      font-size: 3em;
+      font-size: 2.8em;
       margin: 0;
-      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    header h1 .icon {
+      width: 32px;
+      height: 32px;
+    }
+    header h1 .rainbow {
+      background: linear-gradient(90deg, #ff416c, #ff4b2b, #ff416c);
+      background-size: 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      animation: rainbow 3s linear infinite;
+    }
+    @keyframes rainbow {
+      0% { background-position: 0%; }
+      100% { background-position: 100%; }
     }
     header p {
       font-size: 1.2em;
       color: #777;
+      margin: 8px 0 0 0;
     }
     body.dark-theme header p {
       color: #aaa;
@@ -213,17 +230,17 @@
     .reset-cookies-btn:hover {
       background-color: #2eb82e;
     }
-    /* ---------- Warning Note (30% Reduced Size) ---------- */
+    /* ---------- Warning Note (Increased Size) ---------- */
     .download-note {
       margin-top: 20px;
-      padding: 15px;
+      padding: 20px;
       background-color: #ffebee;
       border: 2px solid #f44336;
       border-radius: 8px;
       color: #d32f2f;
       font-weight: bold;
       text-align: center;
-      font-size: 70%;
+      font-size: 1em;
     }
     /* ---------- FAQ Section with Simple Accordion ---------- */
     .faq-section {
@@ -314,8 +331,11 @@
   
   <div class="container">
     <header>
-      <h1>BlocksMC Tracker</h1>
-      <p>Ban Tracker Only</p>
+      <h1>
+        <img src="TrackerIcon.png" alt="Icon" class="icon">
+        <span class="rainbow">BlocksMC Ban Tracker Website</span>
+      </h1>
+      <p>Ban Tracker Only – Want full features? Download our Electron app!</p>
     </header>
     
     <!-- Last Check Info -->
@@ -337,9 +357,9 @@
       <div id="prevList"></div>
     </div>
     
-    <!-- Warning Note -->
+    <!-- Warning Note (Bigger) -->
     <div class="download-note">
-      Warning: This website gets updates but does not support OG username tracker because it uses our IP (subject to anti-VPN detection). For improved stability with a dedicated IP, please use our Electron app.
+      Warning: This website gets updates but does not support OG username tracker because it uses our IP (subject to anti-VPN detection). For improved stability with a dedicated IP and full features, please download our Electron app.
     </div>
     
     <!-- FAQ Section -->

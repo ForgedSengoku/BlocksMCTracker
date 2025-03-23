@@ -9,7 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- L4 -->
   <style>
-    /* (Your existing CSS stays unchanged) */
     /* ---------- Base Styles (Legacy Default) ---------- */ /* L5 */
     body {
       font-family: Arial, sans-serif;
@@ -27,7 +26,308 @@
       background-color: #000;
       color: #fff;
     }
-    /* ... rest of your CSS ... */
+    /* ---------- Container ---------- */
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1;
+    }
+    /* Adjust container for pink theme */
+    body.pink-theme .container {
+      background: #222;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    }
+    /* ---------- Heading with Icon ---------- */
+    h1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #FF8C00, #FF0000, #FFFF00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    /* Pink theme heading override */
+    body.pink-theme h1 {
+      background: linear-gradient(45deg, #e91e63, #ec407a, #f06292);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    h1 img {
+      width: 128px;
+      height: auto;
+      margin-right: 10px;
+    }
+    /* ---------- Form Elements ---------- */
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #000;
+      border-radius: 4px;
+    }
+    body.pink-theme input[type="text"] {
+      background: #333;
+      border: 1px solid #444;
+      color: #fff;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+    body.pink-theme button {
+      background-color: #e91e63;
+    }
+    body.pink-theme button:hover:not(:disabled) {
+      background-color: #ec407a;
+    }
+    /* ---------- Ban Log ---------- */
+    .ban-log {
+      margin-top: 20px;
+      padding: 10px;
+      background: #fff3cd;
+      border-radius: 4px;
+      border: 1px solid #ffeeba;
+    }
+    body.pink-theme .ban-log {
+      background: #2a2a2a;
+      border: 1px solid #ec407a;
+      color: #ff80ab;
+    }
+    .ban-log h2 {
+      margin-top: 0;
+    }
+    .ban-log ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .ban-log li {
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    /* ---------- Last Check Info ---------- */
+    #lastCheckInfo {
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #e0f7fa;
+      border: 1px solid #4dd0e1;
+      border-radius: 4px;
+    }
+    body.pink-theme #lastCheckInfo {
+      background: #2a2a2a;
+      border: 1px solid #ec407a;
+      color: #ff80ab;
+    }
+    /* ---------- Previous Usernames ---------- */
+    #prevContainer {
+      margin-top: 20px;
+      background: #e8eaf6;
+      border: 1px solid #c5cae9;
+      border-radius: 4px;
+      padding: 10px;
+    }
+    body.pink-theme #prevContainer {
+      background: #2a2a2a;
+      border: 1px solid #ec407a;
+      color: #ff80ab;
+    }
+    #prevContainer h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5em;
+      text-align: center;
+    }
+    .prevEntry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+    }
+    body.pink-theme .prevEntry {
+      border-bottom: 1px solid #ec407a;
+    }
+    .prevEntry:last-child {
+      border-bottom: none;
+    }
+    .prevUsername {
+      font-weight: bold;
+    }
+    .prevStatus {
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: white;
+      margin-right: 10px;
+    }
+    .statusNotBanned { background: green; }
+    .statusBanned { background: red; }
+    .statusChecking { background: orange; }
+    .statusLoggedIn { background: yellow; color: black; }
+    .prevCount {
+      font-size: 0.9em;
+      color: #555;
+      margin-right: 10px;
+    }
+    .recheckBtn {
+      background-color: #4CAF50;
+      border: none;
+      padding: 5px 10px;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .recheckBtn:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    /* ---------- Reset Cookies Button ---------- */
+    .reset-cookies-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 1100;
+    }
+    .reset-cookies-btn:hover {
+      background-color: #c9302c;
+    }
+    /* ---------- FAQ Section ---------- */
+    .faq-section {
+      background: #111;
+      color: #eee;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    body.legacy-theme .faq-section {
+      color: #eee;
+    }
+    body.pink-theme .faq-section {
+      color: #ff80ab;
+    }
+    .faq-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .faq-item {
+      border-bottom: 1px solid #333;
+      padding: 10px 0;
+    }
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+    .faq-item summary {
+      cursor: pointer;
+      font-size: 1.2em;
+      outline: none;
+    }
+    .faq-item p {
+      margin-top: 10px;
+      padding-left: 20px;
+      line-height: 1.4;
+    }
+    /* ---------- Theme Toggle Button (Top Left) ---------- */
+    #themeToggle {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 2000;
+    }
+    body.legacy-theme #themeToggle {
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+    }
+    body.pink-theme #themeToggle {
+      background: rgba(233,30,99,0.8);
+      color: #fff;
+    }
+    /* ---------- Floating Hearts (Pink Theme Only) ---------- */
+    #heartsContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+    body.legacy-theme #heartsContainer {
+      display: none;
+    }
+    body.pink-theme #heartsContainer {
+      display: block;
+    }
+    .heart {
+      position: absolute;
+      width: 50px;
+      height: auto;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 5px #ff80ab);
+      animation: glowFall 8s ease-in-out infinite;
+    }
+    @keyframes glowFall {
+      0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+      20% { opacity: 1; }
+      50% { transform: translateY(200px) scale(1); opacity: 0.8; }
+      100% { transform: translateY(400px) scale(0.8); opacity: 0; }
+    }
+    .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .heart:nth-child(2) { left: 40%; animation-delay: 2s; }
+    .heart:nth-child(3) { left: 70%; animation-delay: 4s; }
+    .heart:nth-child(4) { left: 85%; animation-delay: 6s; }
+    /* ---------- Responsive Adjustments ---------- */
+    @media (max-width: 600px) {
+      .container { padding: 15px; }
+      h1 { font-size: 2em; }
+      button { font-size: 14px; padding: 8px 15px; }
+    }
+    /* ---------- Note at the Bottom ---------- */
+    .download-note {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #ffe6e6;
+      border: 2px solid red;
+      border-radius: 8px;
+      color: red;
+      font-weight: bold;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -88,7 +388,6 @@
       <h2>FAQ</h2>
       <!-- (FAQ items remain unchanged) -->
     </div>
-    
   </div>
 
   <!-- Removed Socket.IO Client Library -->
@@ -142,7 +441,26 @@
     updateTheme();
     document.getElementById("themeToggle").addEventListener("click", toggleTheme);
     
-    const colorMap = { /* ... your colorMap remains unchanged ... */ };
+    const colorMap = {
+      black: '#000000',
+      dark_blue: '#0000AA',
+      dark_green: '#00AA00',
+      dark_aqua: '#00AAAA',
+      dark_red: '#AA0000',
+      dark_purple: '#AA00AA',
+      gold: '#FFAA00',
+      gray: '#AAAAAA',
+      grey: '#AAAAAA',
+      dark_gray: '#555555',
+      dark_grey: '#555555',
+      blue: '#5555FF',
+      green: '#55FF55',
+      aqua: '#55FFFF',
+      red: '#FF5555',
+      light_purple: '#FF55FF',
+      yellow: '#FFFF55',
+      white: '#FFFFFF'
+    };
     
     function parseMinecraftMessage(jsonString) {
       try {
@@ -261,7 +579,7 @@
     updateLastCheckInfo();
     updatePrevList();
     
-    // ---------- Check Button Event Handler using HTTPS POST ----------
+    // ---------- Check Button Event Handler using HTTP POST ----------
     const checkBtn = document.getElementById('checkBtn');
     const usernameInput = document.getElementById('username');
     const logList = document.getElementById('logList');
@@ -308,7 +626,7 @@
       // Clear previous log
       logList.innerHTML = "";
       
-      // Use fetch to send a POST request over HTTPS
+      // Use fetch to send a POST request over HTTP
       fetch('/checkBan', {
         method: 'POST',
         headers: {

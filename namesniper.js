@@ -1,1 +1,299 @@
-const e=require("mineflayer"),r=require("mojang-api"),t=require("fs"),n=require("path");let o=null,s=null,a=null,i=!1,c=!1,l=null;function u(e=10){const r="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";let t="";for(let n=0;n<e;n++)t+=r.charAt(Math.floor(62*Math.random()));return t}function m(e){return new Promise(((t,n)=>{r.profile(e,((e,r)=>{!e&&r&&r.name?t(r.name):n(e||"No name returned")}))}))}function f(){const e="C:\\BlocksMC_TrackerData";t.existsSync(e)||t.mkdirSync(e,{recursive:!0});const r=n.join(e,"oguserstore.txt");return t.existsSync(r)||t.writeFileSync(r,"{}","utf8"),r}function g(){const e=f();try{const r=t.readFileSync(e,"utf8");return r?JSON.parse(r):{}}catch(e){return console.error("Error parsing oguserstore.txt:",e),{}}}function d(e,r,n,o){const s=f(),a=g();a[e]={Username:r,Password:n,status:o};try{t.writeFileSync(s,JSON.stringify(a,null,2))}catch(e){console.error("Error writing to oguserstore.txt:",e)}}function y(e){return g()[e]||null}function p(r,t,n){const l=y(r);let m,f;l&&l.Password?(m=l.Password,f=`/login ${m}`):(m=u(),l&&l.Username?d(r,l.Username,m,"Currently checking"):d(r,t,m,"Currently checking"),f=`/login ${m}`),s=e.createBot({host:"play.blocksmc.com",port:25565,username:t,version:"1.8.9",auth:"offline"}),s.once("spawn",(()=>{var e;s._client.write("chat",{message:f}),d(r,t,m,"Claimed account"),a=t,n({type:"claimed",message:`Claimed account for ${t}`}),o&&(clearInterval(o),o=null),e=s,function r(){e&&i&&(e.setControlState("forward",!0),setTimeout((()=>{e.setControlState("forward",!1),e.setControlState("back",!0),setTimeout((()=>{e.setControlState("back",!1),r()}),4e3)}),200))}()})),s.on("end",(()=>{i&&!c&&(n({type:"alert",message:"Bot disconnected. Attempting to reconnect..."}),setTimeout((()=>{p(r,t,n)}),5e3))})),s.on("error",(e=>{console.error("Bot error:",e),c||n({type:"error",message:"Failed to claim. Try again later."})}))}module.exports={startSniper:function(e,r){if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e))return i=!1,l=null,void r({type:"error",message:"Invalid UUID. Please provide a valid UUID."});if(i)return void r({type:"info",message:"Bot is already tracking this UUID."});i=!0,c=!1,l=e;const t=y(e);if(t&&t.Username){if(a=t.Username,!t.Password){const r=u();d(e,a,r,"Currently checking")}r({type:"info",message:"Monitoring started. Currently checking account: "+a})}else m(e).then((t=>{a=t;const n=u();d(e,t,n,"Currently checking"),r({type:"info",message:"Monitoring started. Currently checking account: "+t})})).catch((e=>{r({type:"error",message:"Error retrieving username for UUID: "+e})}));o=setInterval((()=>{m(e).then((t=>{console.log("Pinged Mojang API: resolved username is: "+t);const n=y(e),s=n&&n.Username?n.Username:a;t!==s&&(r({type:"alert",message:`Detected username change from ${s} to ${t}. Attempting to claim immediately...`}),clearInterval(o),o=null,p(e,t,r))})).catch((e=>{console.error("Error checking username:",e)}))}),15e3)},stopSniper:function(e){if(c=!0,o&&(clearInterval(o),o=null,i=!1),s&&(s.quit(),s=null),l){const e=y(l);e&&d(l,e.Username,e.Password,"Stopped")}e({type:"info",message:"Name Claimer Bot stopped. STOP TRACKING"}),l=null},readUserOGStore:g};
+const mineflayer = require('mineflayer');
+const mojang = require('mojang-api');
+const fs = require('fs');
+const path = require('path');
+
+// --- New variable to track Anti-AFK state ---
+let antiAFKActive = false;
+
+let sniperInterval = null;
+let sniperBot = null;
+let lastUsername = null;
+let monitoring = false;
+let userStopped = false; // Flag to track if the user manually stopped the bot
+let currentTargetUuid = null; // Currently tracked account's UUID
+
+// Helper: Generate a random password
+function generateRandomPassword(length = 10) {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
+
+// Using mojang-api to fetch the profile for a given UUID and resolve its name.
+function getNameForUuid(uuid) {
+  return new Promise((resolve, reject) => {
+    mojang.profile(uuid, (err, res) => {
+      if (err || !res || !res.name) {
+        reject(err || "No name returned");
+      } else {
+        resolve(res.name);
+      }
+    });
+  });
+}
+
+// Returns the path to oguserstore.txt in C:\BlocksMC_TrackerData
+function getStoreFilePath() {
+  const dataDir = 'C:\\BlocksMC_TrackerData';
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  const filePath = path.join(dataDir, 'oguserstore.txt');
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '{}', 'utf8');
+  }
+  return filePath;
+}
+
+// Reads and parses the store file.
+function readUserOGStore() {
+  const filePath = getStoreFilePath();
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return data ? JSON.parse(data) : {};
+  } catch (e) {
+    console.error('Error parsing oguserstore.txt:', e);
+    return {};
+  }
+}
+
+// Updates or creates the store entry for a targetUuid with Username, Password, and status.
+function updateUserOGStore(targetUuid, username, password, status) {
+  const filePath = getStoreFilePath();
+  const store = readUserOGStore();
+  store[targetUuid] = { Username: username, Password: password, status: status };
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(store, null, 2));
+  } catch (e) {
+    console.error('Error writing to oguserstore.txt:', e);
+  }
+}
+
+// Retrieves stored data for a targetUuid.
+function getStoredData(targetUuid) {
+  const store = readUserOGStore();
+  return store[targetUuid] || null;
+}
+
+// Helper: Update all entries with status "Currently checking" to "Stopped".
+function updateAllCurrentlyCheckingToStopped() {
+  const filePath = getStoreFilePath();
+  const store = readUserOGStore();
+  let updated = false;
+  for (const uuid in store) {
+    if (store[uuid].status === "Currently checking") {
+      store[uuid].status = "Stopped";
+      updated = true;
+    }
+  }
+  if (updated) {
+    try {
+      fs.writeFileSync(filePath, JSON.stringify(store, null, 2));
+    } catch (e) {
+      console.error('Error updating oguserstore.txt:', e);
+    }
+  }
+}
+
+// Anti-AFK: cycles pressing forward then back using a flag.
+function startAntiAFK(bot) {
+  antiAFKActive = true;
+  function cycle() {
+    if (!bot || !antiAFKActive) return;
+    bot.setControlState('forward', true);
+    setTimeout(() => {
+      bot.setControlState('forward', false);
+      bot.setControlState('back', true);
+      setTimeout(() => {
+        bot.setControlState('back', false);
+        cycle();
+      }, 4000);
+    }, 200);
+  }
+  cycle();
+}
+
+// New function to stop Anti-AFK.
+function stopAntiAFK(bot) {
+  antiAFKActive = false;
+  if (bot) {
+    bot.setControlState('forward', false);
+    bot.setControlState('back', false);
+  }
+}
+
+// Update activateAntiAFK to check if anti-AFK is already active.
+function activateAntiAFK(callback) {
+  if (sniperBot) {
+    if (!antiAFKActive) {
+      startAntiAFK(sniperBot);
+      callback({ type: 'info', message: 'Anti-AFK mode activated.' });
+    } else {
+      callback({ type: 'info', message: 'Anti-AFK mode is already active.' });
+    }
+  } else {
+    callback({ type: 'error', message: 'No active bot found.' });
+  }
+}
+
+// New function to disable Anti-AFK.
+function disableAntiAFK(callback) {
+  if (sniperBot) {
+    if (antiAFKActive) {
+      stopAntiAFK(sniperBot);
+      callback({ type: 'info', message: 'Anti-AFK mode disabled.' });
+    } else {
+      callback({ type: 'info', message: 'Anti-AFK mode is already disabled.' });
+    }
+  } else {
+    callback({ type: 'error', message: 'No active bot found.' });
+  }
+}
+
+// Launches the bot to claim the new username.
+function launchClaimerBot(targetUuid, newUsername, callback) {
+  const stored = getStoredData(targetUuid);
+  let password, command;
+  if (stored && stored.Password) {
+    password = stored.Password;
+    command = `/login ${password}`;
+  } else {
+    password = generateRandomPassword();
+    if (stored && stored.Username) {
+      updateUserOGStore(targetUuid, stored.Username, password, "Currently checking");
+    } else {
+      updateUserOGStore(targetUuid, newUsername, password, "Currently checking");
+    }
+    command = `/login ${password}`;
+  }
+
+  sniperBot = mineflayer.createBot({
+    host: 'play.blocksmc.com',
+    port: 25565,
+    username: newUsername,
+    version: '1.8.9',
+    auth: 'offline'
+  });
+
+  sniperBot.once('spawn', () => {
+    sniperBot._client.write('chat', { message: command });
+    updateUserOGStore(targetUuid, newUsername, password, "Claimed account");
+    lastUsername = newUsername;
+    callback({ type: 'claimed', message: `Claimed account for ${newUsername}` });
+    if (sniperInterval) {
+      clearInterval(sniperInterval);
+      sniperInterval = null;
+    }
+    // Automatically start Anti-AFK mode
+    startAntiAFK(sniperBot);
+  });
+
+  sniperBot.on('end', () => {
+    if (monitoring && !userStopped) {
+      callback({ type: 'alert', message: 'Bot disconnected. Attempting to reconnect...' });
+      setTimeout(() => {
+        launchClaimerBot(targetUuid, newUsername, callback);
+      }, 5000);
+    }
+  });
+
+  sniperBot.on('error', (err) => {
+    console.error('Bot error:', err);
+    if (!userStopped) {
+      callback({ type: 'error', message: 'Failed to claim. Try again later.' });
+    }
+  });
+}
+
+// Starts tracking the provided targetUuid.
+function startSniper(targetUuid, callback) {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(targetUuid)) {
+    monitoring = false;
+    currentTargetUuid = null;
+    updateAllCurrentlyCheckingToStopped();
+    callback({ type: 'error', message: 'Invalid UUID. Please provide a valid UUID.' });
+    return;
+  }
+  if (monitoring) {
+    callback({ type: 'info', message: 'Bot is already tracking this UUID.' });
+    return;
+  }
+  monitoring = true;
+  userStopped = false;
+  currentTargetUuid = targetUuid;
+
+  const stored = getStoredData(targetUuid);
+  if (stored && stored.Username) {
+    lastUsername = stored.Username;
+    if (!stored.Password) {
+      const newPassword = generateRandomPassword();
+      updateUserOGStore(targetUuid, lastUsername, newPassword, "Currently checking");
+    }
+    callback({ type: 'info', message: 'Monitoring started. Currently checking account: ' + lastUsername });
+  } else {
+    getNameForUuid(targetUuid)
+      .then(username => {
+        lastUsername = username;
+        const randomPassword = generateRandomPassword();
+        updateUserOGStore(targetUuid, username, randomPassword, "Currently checking");
+        callback({ type: 'info', message: 'Monitoring started. Currently checking account: ' + username });
+      })
+      .catch(err => {
+        callback({ type: 'error', message: 'Error retrieving username for UUID: ' + err });
+      });
+  }
+  
+  sniperInterval = setInterval(() => {
+    getNameForUuid(targetUuid)
+      .then(currentUsername => {
+        console.log("Pinged Mojang API: resolved username is: " + currentUsername);
+        const storedData = getStoredData(targetUuid);
+        const oldUsername = (storedData && storedData.Username) ? storedData.Username : lastUsername;
+        if (currentUsername !== oldUsername) {
+          callback({ type: 'alert', message: `Detected username change from ${oldUsername} to ${currentUsername}. Attempting to claim immediately...` });
+          clearInterval(sniperInterval);
+          sniperInterval = null;
+          launchClaimerBot(targetUuid, currentUsername, callback);
+        }
+      })
+      .catch(err => {
+        console.error('Error checking username:', err);
+      });
+  }, 15000);
+}
+
+// Stops the tracking bot and marks the target as stopped.
+function stopSniper(callback) {
+  userStopped = true;
+  if (sniperInterval) {
+    clearInterval(sniperInterval);
+    sniperInterval = null;
+    monitoring = false;
+  }
+  if (sniperBot) {
+    sniperBot.quit();
+    sniperBot = null;
+  }
+  if (currentTargetUuid) {
+    const stored = getStoredData(currentTargetUuid);
+    if (stored) {
+      updateUserOGStore(currentTargetUuid, stored.Username, stored.Password, "Stopped");
+    }
+  }
+  callback({ type: 'info', message: 'Name Claimer Bot stopped. STOP TRACKING' });
+  currentTargetUuid = null;
+}
+
+module.exports = { 
+  startSniper, 
+  stopSniper, 
+  readUserOGStore, 
+  updateAllCurrentlyCheckingToStopped, 
+  activateAntiAFK, 
+  disableAntiAFK 
+};

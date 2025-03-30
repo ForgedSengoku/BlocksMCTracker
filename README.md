@@ -1,18 +1,19 @@
 
+
 # BlocksMC Tracker
 
-BlocksMC Tracker is an **Electron App** designed to monitor and track **player ban statuses** on BlocksMC in real-time. With the latest update, the app now uses **Electron IPC requests** instead of Express/Socket.IO, eliminating port conflicts and reducing unnecessary overhead. The user interface has been enhanced to include sound effects (e.g., when a button is pressed) for a more responsive experience. Additionally, the app now allows only a single instance to run at a time to conserve RAM and avoid memory leaks.
+BlocksMC Tracker is a **desktop application** designed to monitor and track **player ban statuses** on **BlocksMC Java Edition** servers in real-time. The application uses the **Electron package** for **fast and reliable** performance without unnecessary overhead. The user interface has been enhanced with sound effects to improve responsiveness, and the app now only allows one instance to run at a time, reducing RAM usage and preventing memory leaks.
 
 > **Important:**
-> - **Desktop Users (Windows):** This update is available **only for Windows**. Linux and macOS versions are not provided.
-> - **Mobile Users:** The previous Android APK version is no longer maintained. If you need a mobile version, you can build your own solution using the source code.
+> - **Desktop Users (Windows):** This update is **only available for Windows**. Linux and macOS versions are not provided.
+> - **Mobile Users:** The previous Android APK version will **never be updated** or maintained. This application is **specifically designed for Java Edition** of **BlocksMC** servers, and no mobile version will be released.
 
 ---
 
 ## Features
 
 - **Real-Time Ban Monitoring** – Instantly check if a player is banned or unbanned on BlocksMC.
-- **IPC-Based Communication** – Fully uses Electron's IPC requests for **faster, more reliable, and conflict-free** performance.
+- **Electron Package Communication** – Uses **IPC** requests for **faster, more reliable, and conflict-free** performance.
 - **Single Instance Lock** – Prevents multiple instances from opening, reducing RAM usage and avoiding duplicate bot requests.
 - **Sound Effects** – Integrated interactive sounds (e.g., for button presses) to enhance the user experience.
 - **Stylish Interface** – Clean and modern design with theme options (Legacy and Pink).
@@ -20,6 +21,9 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
 - **Lightweight** – Optimized to use minimal resources since it’s solely a ban checker tool.
 - **Local Storage** – Uses localStorage to persist session data (no external databases required).
 - **Desktop Version Available (Windows Only)** – Easy-to-install version for Windows users.
+- **NameSniper Instant Claim** – Instant name claim if a new username is detected.
+- **Constant Updates & Bug Fixes** – Regularly updated with new features and fixed bugs.
+- **Self-Kicker** – Automatically kicks players if certain conditions are met (useful for avoiding unwanted players).
 
 ---
 
@@ -45,7 +49,7 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
    ```bash
    npm install
    ```
-   *(Make sure `electron`, `electron-builder`, and other dependencies are correctly installed.)*
+   *(Ensure `electron`, `electron-builder`, and other dependencies are correctly installed.)*
 
 3. **Testing the App:**
    Launch the Electron app with:
@@ -61,10 +65,6 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
    ```
    *(This uses electron-builder based on your modified package.json, where the main field is set to "main.js".)*
 
-### Note for Mobile Users
-
-**There is no official Android version** of BlocksMC Tracker anymore. Electron does not support mobile platforms directly, and the APK is no longer maintained. However, if you’re inclined to create your own mobile version, the source code is available for you to modify and build as needed.
-
 ---
 
 ## Changelog
@@ -72,27 +72,50 @@ BlocksMC Tracker is an **Electron App** designed to monitor and track **player b
 ### Version 1.0.4
 
 - **Switched to Electron IPC:**  
-  Replaced all `socket.io` and `express` requests with IPC requests. This eliminates port conflicts (e.g., with users’ own Minecraft servers) and makes communication much faster.
+  Replaced all previous request methods with IPC requests for faster, more reliable performance.
 
 - **Single Instance Lock:**  
-  The app now allows only one instance at a time, preventing multiple windows from opening and reducing RAM usage.
+  The app now only allows one instance to run at a time, reducing RAM usage and preventing multiple bot requests.
 
 - **Sound Effects Integration:**  
-  Added sound effects for button presses and status notifications, improving user interactivity.
+  Added sound effects for button presses and status notifications.
 
 - **Removed Unused Assets:**  
-  Cleared out unnecessary files to free up storage and reduce bloat.
+  Cleared unnecessary files to reduce storage usage.
 
-- **Updated index.html:**  
-  Modified the ban tracker interface to work entirely with IPC requests—ensuring that the "last checked" username and previous username lists update instantly.
+- **Updated Interface:**  
+  The interface now fully uses IPC requests to update usernames and ban statuses in real time.
 
-- **Package.json Modifications:**  
-  - Changed the main entry from `server.js` to `main.js`.
-  - Removed Express and Socket.IO dependencies.
-  - Updated build instructions; users now run `yarn app:dist` to build the app.
-  
-- **Versioning Update:**  
-  Corrected version numbering from previous releases (all earlier versions were marked as 1.0.0). The current release is **1.0.4**.
+- **Version Update:**  
+  The release version has been corrected to **1.0.4**.
+
+---
+
+## How the Features Work
+
+### **Ban Checking:**
+The ban checking is done through a **Mineflayer bot** that logs in with the specified username. It interacts with the BlocksMC server and checks the player’s ban status in real-time.
+
+### **NameSniper:**
+NameSniper is designed to instantly claim a username once it's available. However, it may have some limitations:
+- **Buggy Performance:** It may sometimes fail due to unstable internet connections or being rate-limited by BlocksMC.
+- **Internet Issues:** If your internet connection is interrupted, the NameSniper might not work properly.
+
+### **Self-Kicker:**
+The Self-Kicker is a feature that kicks players if they meet specific conditions, such as entering specific usernames. This feature can be useful to automatically remove unwanted players but can also be risky if not configured properly.
+
+### **Connection Blocker:**
+The **Connection Blocker** works by sending 1000 bot connections to **overload** the server, causing a **rate-limiting effect**. This can be useful in environments like school Wi-Fi where access to BlocksMC is restricted, but it’s a **high-risk** feature. Use it responsibly, as it may result in severe consequences if abused.
+
+---
+
+## What We Cannot Do Right Now:
+
+- **Check Premium Accounts:**  
+  Currently, we cannot check premium accounts, but it may be possible in the future if they are not in "premium mode" or if they are cracked accounts.
+
+- **NameSniper Performance:**  
+  There are no guarantees that NameSniper will always work as expected. Bugs may occur, especially if there are interruptions in your internet or rate-limiting happens.
 
 ---
 
@@ -134,7 +157,7 @@ Below is an example of the `package.json` file (with modifications) used for bui
 ```json
 {
   "name": "blocksmctracker",
-  "version": "1.0.4",
+  "version": "1.1.1",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -145,35 +168,46 @@ Below is an example of the `package.json` file (with modifications) used for bui
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [],
-  "author": "",
+  "author": "ForgedSengoku",
   "license": "ISC",
   "dependencies": {
-    "minecraft-api": "^0.0.3",
+    "electron-updater": "^6.3.9",
     "mineflayer": "^4.26.0",
     "mojang-api": "^0.0.2"
   },
   "devDependencies": {
     "electron": "^34.2.0",
-    "electron-builder": "^25.1.8"
+    "electron-builder": "^25.1.8",
+    "javascript-obfuscator": "^4.1.1"
   },
   "build": {
     "appId": "com.blocksmctracker.app",
     "productName": "BlocksMC Tracker",
+    "artifactName": "BlocksMC-Tracker-Setup-${version}.${ext}",
     "files": [
       "main.js",
       "bot.js",
       "namesniper.js",
       "package.json",
       "preload.js",
+      "selfkick.js",
+      "ratelimit.js",
+      "ipaccountevader.js",
       "public/**/*"
     ],
     "win": {
       "target": "nsis",
       "icon": "public/icon.ico"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "ForgedSengoku",
+      "repo": "BlocksMCTracker"
     }
   },
-  "description": "Tracker APP"
+  "description": "BlocksMC Tracker App"
 }
+
 ```
 
 ---
@@ -211,4 +245,5 @@ Below is an example of the `package.json` file (with modifications) used for bui
 This project is **not affiliated** with BlocksMC. Use it responsibly and in compliance with BlocksMC's terms of service.
 
 **⭐ Star this repo if you find it useful!**  
-Report issues at [GitHub Issues](https://github.com/ForgedSengoku/BlocksMCTracker/issues).
+Report issues at [GitHub Issues](https://github.com/ForgedSengoku/BlocksMCTracker/issues). 
+

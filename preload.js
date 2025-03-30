@@ -1,1 +1,45 @@
-const{contextBridge:e,ipcRenderer:n}=require("electron");e.exposeInMainWorld("electronAPI",{alert:e=>n.sendSync("show-alert",e),confirm:e=>n.sendSync("show-confirm",e),sendCheckBan:e=>n.send("checkBan",e),onBanResult:e=>n.on("banResult",((n,s)=>e(s))),onKickLog:e=>n.on("kickLog",((n,s)=>e(s))),sendStartNamesniper:e=>n.send("startNamesniper",{targetUuid:e}),sendStopNamesniper:()=>n.send("stopNamesniper"),sendGetOGUsernames:()=>n.send("getOGUsernames"),onNamesniperInfo:e=>n.on("namesniperInfo",((n,s)=>e(s))),onNamesniperAlert:e=>n.on("namesniperAlert",((n,s)=>e(s))),onNamesniperClaimed:e=>n.on("namesniperClaimed",((n,s)=>e(s))),onNamesniperError:e=>n.on("namesniperError",((n,s)=>e(s))),onNamesniperStopped:e=>n.on("namesniperStopped",((n,s)=>e(s))),onOGUsernames:e=>n.on("ogUsernames",((n,s)=>e(s))),enableSelfKick:()=>n.send("enable-selfkick"),disableSelfKick:()=>n.send("disable-selfkick"),onSelfKickStatus:e=>n.on("selfkick-status",((n,s)=>e(s))),onSelfKickLog:e=>n.on("selfkick-log",((n,s)=>e(s)))});
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  alert: (message) => ipcRenderer.sendSync('show-alert', message),
+  confirm: (message) => ipcRenderer.sendSync('show-confirm', message),
+
+  // Ban Tracker IPC
+  sendCheckBan: (username) => ipcRenderer.send('checkBan', username),
+  onBanResult: (callback) => ipcRenderer.on('banResult', (event, message) => callback(message)),
+  onKickLog: (callback) => ipcRenderer.on('kickLog', (event, message) => callback(message)),
+
+  // OG Username Tracker IPC
+  sendStartNamesniper: (targetUuid) => ipcRenderer.send('startNamesniper', { targetUuid }),
+  sendStopNamesniper: () => ipcRenderer.send('stopNamesniper'),
+  sendGetOGUsernames: () => ipcRenderer.send('getOGUsernames'),
+  onNamesniperInfo: (callback) => ipcRenderer.on('namesniperInfo', (event, message) => callback(message)),
+  onNamesniperAlert: (callback) => ipcRenderer.on('namesniperAlert', (event, message) => callback(message)),
+  onNamesniperClaimed: (callback) => ipcRenderer.on('namesniperClaimed', (event, message) => callback(message)),
+  onNamesniperError: (callback) => ipcRenderer.on('namesniperError', (event, message) => callback(message)),
+  onNamesniperStopped: (callback) => ipcRenderer.on('namesniperStopped', (event, message) => callback(message)),
+  onOGUsernames: (callback) => ipcRenderer.on('ogUsernames', (event, usernames) => callback(usernames)),
+
+  // SelfKick IPC
+  enableSelfKick: () => ipcRenderer.send('enable-selfkick'),
+  disableSelfKick: () => ipcRenderer.send('disable-selfkick'),
+  onSelfKickStatus: (callback) => ipcRenderer.on('selfkick-status', (event, status) => callback(status)),
+  onSelfKickLog: (callback) => ipcRenderer.on('selfkick-log', (event, log) => callback(log)),
+
+  // Account Evader IPC
+  startAccountEvader: (username, password) => ipcRenderer.send('startAccountEvader', { username, password }),
+  onAccountEvaderResult: (callback) => ipcRenderer.on('accountEvaderResult', (event, result) => callback(result)),
+  onAccountEvaderLog: (callback) => ipcRenderer.on('accountEvaderLog', (event, message) => callback(message)),
+
+  // Anti-AFK IPC
+  startAntiafk: () => ipcRenderer.send('startAntiafk'),
+  stopAntiafk: () => ipcRenderer.send('stopAntiafk'),
+  onAntiafkStarted: (callback) => ipcRenderer.on('antiafkStarted', (event, message) => callback(message)),
+  onAntiafkStopped: (callback) => ipcRenderer.on('antiafkStopped', (event, message) => callback(message)),
+
+  // RateLimiter IPC (New Additions)
+  startRateLimiter: () => ipcRenderer.send('start-ratelimiter'),
+  stopRateLimiter: () => ipcRenderer.send('stop-ratelimiter'),
+  onRateLimiterStatus: (callback) => ipcRenderer.on('ratelimiter-status', (event, status) => callback(status)),
+  onRateLimiterLog: (callback) => ipcRenderer.on('ratelimiter-log', (event, log) => callback(log))
+});

@@ -102,7 +102,7 @@ NameSniper is designed to instantly claim a username once it's available. Howeve
 - **Internet Issues:** If your internet connection is interrupted, the NameSniper might not work properly.
 
 ### **Self-Kicker:**
-The Self-Kicker is a feature that kicks players if they meet specific conditions, such as entering specific usernames. This feature can be useful to automatically remove unwanted players but can also be risky if not configured properly.
+The Self-Kicker is a feature that works in your ip only spawns 3 bots accounts to register to lobby to trigger antialt limit and blocksmc system kicks players from that ip.
 
 ### **Connection Blocker:**
 The **Connection Blocker** works by sending 1000 bot connections to **overload** the server, causing a **rate-limiting effect**. This can be useful in environments like school Wi-Fi where access to BlocksMC is restricted, but it’s a **high-risk** feature. Use it responsibly, as it may result in severe consequences if abused.

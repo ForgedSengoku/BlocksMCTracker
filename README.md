@@ -177,8 +177,7 @@ Below is an example of the `package.json` file (with modifications) used for bui
   },
   "devDependencies": {
     "electron": "^34.2.0",
-    "electron-builder": "^25.1.8",
-    "javascript-obfuscator": "^4.1.1"
+    "electron-builder": "^25.1.8"
   },
   "build": {
     "appId": "com.blocksmctracker.app",
@@ -207,6 +206,7 @@ Below is an example of the `package.json` file (with modifications) used for bui
   },
   "description": "BlocksMC Tracker App"
 }
+
 
 ```
 

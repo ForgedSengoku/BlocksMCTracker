@@ -5,6 +5,27 @@ const mineflayer = require('mineflayer');
 
 const app = express();
 
+// Simple in-memory rate limiter settings
+const rateLimitWindowMs = 20000; // 20 seconds
+const rateLimitMaxRequests = 20;
+const rateLimitStore = {}; // key: IP, value: array of timestamps
+
+// Rate limiter middleware
+function rateLimiter(req, res, next) {
+  const ip = req.ip;
+  const now = Date.now();
+  if (!rateLimitStore[ip]) {
+    rateLimitStore[ip] = [];
+  }
+  // Remove timestamps older than the rate limit window
+  rateLimitStore[ip] = rateLimitStore[ip].filter(timestamp => now - timestamp < rateLimitWindowMs);
+  if (rateLimitStore[ip].length >= rateLimitMaxRequests) {
+    return res.status(429).json({ error: "You're been ratelimited" });
+  }
+  rateLimitStore[ip].push(now);
+  next();
+}
+
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
@@ -27,74 +48,69 @@ function createBotInstance(username, callback) {
   });
 
   let finalResultSent = false;
-  const logs = []; // Collect log events
 
-  // Send the final result (includes logs) and disconnect the bot
+  // Send the final result and disconnect the bot
   function sendFinalResult(message) {
     if (!finalResultSent) {
       finalResultSent = true;
-      callback({ type: 'result', message, logs });
+      callback({ type: 'result', message });
       if (bot && typeof bot.quit === 'function') {
         bot.quit('Disconnecting after final result');
       }
     }
   }
 
-  // Log event messages
-  function logEvent(message) {
-    logs.push(message);
-  }
-
-  // When the bot spawns, assume not banned (no delay now)
+  // When the bot spawns, assume not banned (no delay)
   bot.on('spawn', () => {
     if (bot && typeof bot.quit === 'function') {
       bot.quit("Spawning complete, logging out.");
     }
-    sendFinalResult(`The player <span style="color:red;">${username}</span> is currently not banned!`);
+    sendFinalResult(`Player ${username} is currently not banned!`);
   });
 
-  // Listen for chat messages (if any)
+  // Listen for chat messages (optional logging, not sent in final API response)
   bot.on('message', (messageObj) => {
     const msgText = messageObj.toString();
     console.log('Chat message:', msgText);
-    logEvent('Chat: ' + msgText);
+    // You may log or process messages as needed.
   });
 
-  // When the bot is kicked, log and send the kick message
+  // When the bot is kicked, return a message indicating the kick reason
   bot.on('kicked', (reason) => {
     const msgText = reason.toString();
     console.log('Kicked:', msgText);
-    logEvent('Kicked: ' + msgText);
+    let kickMessage = msgText;
 
     if (msgText.includes('You are banned from the server')) {
-      sendFinalResult('IP banned: ' + msgText);
+      kickMessage = `IP banned: ${msgText}`;
     } else if (msgText.includes('You are banned from BlocksMC network')) {
-      sendFinalResult('Banned from BlocksMC network: ' + msgText);
+      kickMessage = `Banned from BlocksMC network: ${msgText}`;
     } else if (msgText.includes('Please connect using PREMIUM.BLOCKSMC.COM')) {
-      sendFinalResult('Premium account: Cannot determine ban status. (Requires premium authentication.)');
+      kickMessage = `Premium account: Cannot determine ban status. (Requires premium authentication.)`;
     } else {
-      sendFinalResult('Kicked: ' + msgText);
+      kickMessage = `got kicked for: ${msgText}`;
     }
+    sendFinalResult(`Player ${username} ${kickMessage}`);
   });
 
   // Handle errors from the bot
   bot.on('error', (err) => {
     console.error('Bot encountered an error:', err);
     if (!finalResultSent) {
-      sendFinalResult('Error: ' + err.message);
+      sendFinalResult(`Error: ${err.message}`);
     }
   });
 
   // Timeout after 60 seconds if no final result is received
   setTimeout(() => {
     if (!finalResultSent) {
-      sendFinalResult('No ban message detected. Possibly not banned or a premium account.');
+      sendFinalResult(`No ban message detected for ${username}. Possibly not banned or a premium account.`);
     }
   }, 60000);
 }
 
-// API endpoint using GET for URL access (e.g., /api/check/Username)
-app.get('/api/check/:username', (req, res) => {
+// Apply the rateLimiter middleware to our API endpoints
+app.get('/api/check/:username', rateLimiter, (req, res) => {
   const username = req.params.username;
   if (!username) {
     return res.status(400).json({ error: 'No username provided' });
@@ -110,13 +126,13 @@ app.get('/api/check/:username', (req, res) => {
       fs.appendFile(path.join(__dirname, 'public', 'store_data.txt'), logLine, (err) => {
         if (err) console.error('Error appending to store_data.txt:', err);
       });
-      return res.json({ player: username, message: data.message, logs: data.logs });
+      return res.json({ player: username, message: data.message });
     }
   });
 });
 
-// Also support POST endpoint if needed
-app.post('/checkBan', (req, res) => {
+// Also support POST endpoint if needed, with rate limiting
+app.post('/checkBan', rateLimiter, (req, res) => {
   const username = req.body.username;
   if (!username) {
     return res.status(400).json({ error: 'No username provided' });
@@ -131,12 +147,13 @@ app.post('/checkBan', (req, res) => {
       fs.appendFile(path.join(__dirname, 'public', 'store_data.txt'), logLine, (err) => {
         if (err) console.error('Error appending to store_data.txt:', err);
       });
-      return res.json({ player: username, message: data.message, logs: data.logs });
+      return res.json({ player: username, message: data.message });
     }
   });
 });
 
-// Start the HTTP server on port 5052
-app.listen(5052, () => {
-  console.log('HTTP Server running on http://localhost:5052');
+// Start the HTTP server on port 5052 (or process.env.PORT if available)
+const port = process.env.PORT || 5052;
+app.listen(port, () => {
+  console.log(`HTTP Server running on port ${port}`);
 });

@@ -8,6 +8,8 @@ BlocksMC Tracker is a **desktop application** designed to monitor and track **pl
 > - **Desktop Users (Windows):** This update is **only available for Windows**. Linux and macOS versions are not provided.
 > - **Mobile Users:** The previous Android APK version will **never be updated** or maintained. This application is **specifically designed for Java Edition** of **BlocksMC** servers, and no mobile version will be released.
 
+> [!WARNING]
+> BlocksMC Tracker is new Warning: This project is relatively new, so there might be bugs. It is unfinished.
 ---
 
 ## Features

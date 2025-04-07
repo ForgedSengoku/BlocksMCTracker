@@ -4,13 +4,15 @@
 
 BlocksMC Tracker is a **desktop application** designed to monitor and track **player ban statuses** on **BlocksMC Java Edition** servers in real-time. The application uses the **Electron package** for **fast and reliable** performance without unnecessary overhead. The user interface has been enhanced with sound effects to improve responsiveness, and the app now only allows one instance to run at a time, reducing RAM usage and preventing memory leaks.
 
-> **Important:**
-> - **Desktop Users (Windows):** This update is **only available for Windows**. Linux and macOS versions are not provided.
-> - **Mobile Users:** The previous Android APK version will **never be updated** or maintained. This application is **specifically designed for Java Edition** of **BlocksMC** servers, and no mobile version will be released.
 
 > [!WARNING]
 > BlocksMC Tracker is not fully developed so it has bugs.
 ---
+
+> **Important:**
+> - **Desktop Users (Windows):** This update is **only available for Windows**. Linux and macOS versions are not provided.
+> - **Mobile Users:** The previous Android APK version will **never be updated** or maintained. This application is **specifically designed for Java Edition** of **BlocksMC** servers, and no mobile version will be released.
+
 
 ## Features
 

@@ -7,6 +7,7 @@ BlocksMC Tracker is a **desktop application** designed to monitor and track **pl
 
 > [!WARNING]
 > BlocksMC Tracker is not fully developed so it has bugs.
+> Also nodejs version will be discontinued and move to rust for efficent way to native and stop killing your fps in games
 ---
 
 > **Important:**
